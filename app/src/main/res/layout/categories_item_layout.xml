@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
+    
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_layout"
+        android:focusable="true"
+        android:clickable="true">
+
+        <RelativeLayout
+            android:layout_width="260dp"
+            android:layout_height="330dp"
+            android:padding="5dp">
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+                <ImageView
+                    android:id="@+id/category_image"
+                    android:layout_width="240dp"
+                    android:scaleType="fitXY"
+                    android:layout_height="330dp"
+                    android:src="@drawable/placeholder" />
+                <View
+                    android:id="@+id/dim_view1"
+                    android:layout_width="240dp"
+                    android:layout_height="330dp"
+                    android:background="#99111111"/>
+            </FrameLayout>
+
+
+            <FrameLayout
+                android:layout_width="260dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="40dp">
+                <TextView
+                    android:id="@+id/title_text"
+                    android:layout_width="210dp"
+                    android:layout_height="50dp"
+                    android:text="Pakistani Movies"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:padding="5dp"
+                    android:background="@color/item_unselectedd"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:textColor="#ffffff"/>
+                <View
+                    android:id="@+id/dim_view2"
+                    android:layout_width="210dp"
+                    android:layout_height="50dp"
+                    android:background="#99111111"/>
+            </FrameLayout>
+
+        </RelativeLayout>
+
+
+
+    </FrameLayout>
+
+    
+</LinearLayout>

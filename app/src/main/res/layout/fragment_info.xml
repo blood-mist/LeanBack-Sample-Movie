@@ -1,0 +1,177 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="maxxtv.movies.stb.Fragments.InfoFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/menu_background"
+        android:padding="15dp"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/gradient_border" />
+
+        <TextView
+            android:id="@+id/info_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="MarcoPolo"
+            android:textColor="@color/textColor"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/info_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minLines="3"
+                    android:text="Hello,Here will be the description of the movie"
+                    android:textColor="@color/text_color_60" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/star_1"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/rate_grey" />
+
+                    <ImageView
+                        android:id="@+id/star_2"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/rate_grey" />
+
+                    <ImageView
+                        android:id="@+id/star_3"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/rate_grey" />
+
+                    <ImageView
+                        android:id="@+id/star_4"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/rate_grey" />
+
+                    <ImageView
+                        android:id="@+id/star_5"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/rate_grey" />
+
+                    <TextView
+                        android:id="@+id/release_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:padding="5dp"
+                        android:text="2017"
+                        android:textColor="#ffffff"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5">
+
+                <TextView
+                    android:id="@+id/director_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Director:"
+                    android:textColor="@color/text_color_60" />
+
+                <TextView
+                    android:id="@+id/director_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/director_info"
+                    android:layout_alignStart="@+id/director_info"
+                    android:layout_below="@+id/director_info"
+                    android:text="Nishan Khadka"
+                    android:textColor="@color/text_color_80" />
+
+                <TextView
+                    android:id="@+id/info_stars_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/director_name"
+                    android:layout_marginTop="25dp"
+                    android:text="Stars:"
+                    android:textColor="@color/text_color_60" />
+
+                <TextView
+                    android:id="@+id/movie_stars"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/info_stars_label"
+                    android:text="Nishan,Nishan II"
+                    android:textColor="@color/text_color_80" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Writers:"
+                    android:textColor="@color/text_color_60" />
+
+                <TextView
+                    android:id="@+id/movie_writers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nishan Khadka,Nishan,Khadka"
+                    android:textColor="@color/text_color_80" />
+            </LinearLayout>
+
+
+            <!-- <ImageButton
+                 android:focusable="true"
+                 android:clickable="true"
+                 android:layout_margin="20dp"
+                 android:layout_width="80dp"
+                 android:layout_height="80dp"
+                 android:src="@drawable/watch_later_selector"/>-->
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/gradient_border"
+            android:rotation="180" />
+    </LinearLayout>
+
+</FrameLayout>

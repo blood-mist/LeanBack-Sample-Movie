@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="layout_background">#2a2a2a</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="text_bg_color">#e9743c</color>
+    <color name="dark_blue">#039ed3</color>
+    <color name="item_unselectedd">#181818</color>
+    <color name="color_text_silver">#CFCFCF</color>
+    <color name="signup_form_text_color">#CCCCCC</color>
+    <color name="package_dailog_background">#111111</color>
+    <color name="view_line">#40aaaaaa</color>
+    <color name="top_up_text_color">#c4c4c4</color>
+    <color name="track_color">#9e1e27 </color>
+    <color name="search_background">#b59e1e27</color>
+    <color name="textColor">#ffffff</color>
+    <color name="text_color_60">#99ffffff</color>
+    <color name="text_color_80">#ccffffff</color>
+    <color name="text_not_selected_color">#cdcdcd</color>
+    <color name="unauthorized_text_color">#cdcdcd</color>
+    <color name="unauthorized_text_color_heading">#ececec</color>
+    <color name="menu_background">#8c000000</color>
+</resources>

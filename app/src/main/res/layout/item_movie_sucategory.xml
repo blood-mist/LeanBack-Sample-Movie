@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+ >
+
+    <TextView
+        android:id="@+id/subcategory_name"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:text="Romantic"
+        android:textSize="16sp"
+        android:padding="5dp"
+        android:textStyle="bold"
+        android:textColor="#607D8B"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/black"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"
+        android:layout_below="@+id/subcategory_name"/>
+    <View
+        android:id="@+id/selected_view"
+        android:visibility="visible"
+        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_alignLeft="@+id/subcategory_name"
+        android:layout_alignStart="@+id/subcategory_name"
+        android:layout_alignEnd="@+id/subcategory_name"
+        android:layout_alignRight="@+id/subcategory_name"
+        android:background="@color/text_bg_color"
+        android:layout_below="@+id/subcategory_name"/>
+
+</RelativeLayout>

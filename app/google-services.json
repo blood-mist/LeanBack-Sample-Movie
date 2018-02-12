@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "307001279291",
+    "firebase_url": "https://maxtvmoviesstb.firebaseio.com",
+    "project_id": "maxtvmoviesstb",
+    "storage_bucket": "maxtvmoviesstb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307001279291:android:23b86d80772895a7",
+        "android_client_info": {
+          "package_name": "maxxtv.movies.stb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "307001279291-rvnjhec8d97bj1hg048i633v9dtrmge8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "maxxtv.movies.stb",
+            "certificate_hash": "e21e283e735dcd50bacf6ddc1e529be528928724"
+          }
+        },
+        {
+          "client_id": "307001279291-acsrb1ouem23i4jkbc18rd5duakr355p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoFTBMTdhYV1dMsWmb3KwI2oDNgiZ2mY8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "307001279291-acsrb1ouem23i4jkbc18rd5duakr355p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

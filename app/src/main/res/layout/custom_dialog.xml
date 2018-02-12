@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_error"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#00000000"
+    android:gravity="center">
+
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/custom_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        app:indicatorName="BallSpinFadeLoaderIndicator"
+
+        />
+
+
+    <FrameLayout
+        android:id="@+id/custom_dialog_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:background="#00000000">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/round_shape"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/dialog_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center_horizontal"
+                android:text="ERROR"
+                android:textColor="#dadada"
+                android:textSize="25sp" />
+
+            <View
+                android:id="@+id/view_below_mac"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@color/view_line" />
+
+            <LinearLayout
+                android:id="@+id/mac_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/macaddress_fixed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_weight="2"
+                    android:text="Mac Address: "
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#dadada"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/macaddress_variable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:layout_toRightOf="@+id/macaddress_fixed"
+                    android:layout_weight="2"
+                    android:text="@string/empty_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#dadada" />
+
+                <TextView
+                    android:id="@+id/app_version_fixed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toLeftOf="@+id/app_version_variable"
+                    android:layout_weight="2"
+                    android:text="App Version: "
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#dadada"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/app_version_variable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_weight="2"
+                    android:text="@string/empty_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#dadada" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/error_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="15dp"
+                    />
+
+
+                <TextView
+                    android:id="@+id/message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="sadsadjsdfhsajdfhjksdahfkjsa"
+                    android:textColor="#dadada"
+                    android:textSize="16sp"
+                    android:layout_margin="10dp"
+                    android:visibility="visible" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_error_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_horizontal"
+                android:padding="10dp"
+                android:text="ERROR CODE 98978"
+                android:textColor="#dadada" />
+
+            <View
+                android:id="@+id/view_above_button"
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@color/view_line" />
+
+
+            <!-- <Button
+                 android:layout_marginTop="20dp"
+                 android:layout_gravity="center"
+                 android:id="@+id/btn_positive"
+                 android:layout_width="wrap_content"
+                 android:layout_height="30dp"
+                 android:background="@drawable/button_round_shape"
+                 android:focusable="true"
+                 android:text="SETTINGS"
+                 android:textColor="@color/package_dialog_button_textcolor" />-->
+            <LinearLayout
+                android:id="@+id/button_layout"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/positive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_round_shape"
+                    android:focusable="true"
+                    android:padding="5dp"
+                    android:text="positive"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@drawable/package_dialog_button_textcolor" />
+
+
+                <Button
+                    android:id="@+id/neutral"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_round_shape"
+                    android:focusable="true"
+                    android:padding="5dp"
+                    android:text="neutral"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@drawable/package_dialog_button_textcolor" />
+
+
+                <Button
+                    android:id="@+id/negative"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_round_shape"
+                    android:focusable="true"
+                    android:padding="5dp"
+                    android:text="negative"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@drawable/package_dialog_button_textcolor" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/closeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            android:background="@drawable/selector_close_dialog"
+            android:clickable="true" />
+    </FrameLayout>
+
+
+</RelativeLayout>
+<!--
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_heading"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/dialog_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:text="Login Failed"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#ddd" />
+
+    <RelativeLayout
+        android:id="@+id/mac_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#e2e2e2"
+        android:paddingBottom="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp" >
+
+        <TextView
+            android:id="@+id/macaddress_fixed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Mac Address: "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#000"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/macaddress_variable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/macaddress_fixed"
+            android:text="@string/empty_text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#000" />
+
+        <TextView
+            android:id="@+id/app_version_fixed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/app_version_variable"
+            android:text="App Version: "
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#000"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/app_version_variable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="@string/empty_text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#000" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/view_below_mac"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="#979797"
+        android:minWidth="300dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f7f7f7"
+        android:gravity="center"
+        android:padding="20dp" >
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp" />
+
+        <ImageView
+            android:id="@+id/error_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#f7f7f7"
+            android:gravity="center_vertical"
+            android:text="@string/empty_text"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse"
+            android:textColor="#181818" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view_above_button"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="#c8c8c8" />
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="#f7f7f7"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/positive"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#f7f7f7"
+            android:padding="5dp"
+            android:text="positive"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse"
+            android:textColor="@drawable/custom_dialog_button_selector"
+            android:textStyle="bold" />
+
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:background="#c8c8c8" />
+
+        <Button
+            android:id="@+id/neutral"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#f7f7f7"
+            android:padding="5dp"
+            android:text="neutral"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse"
+            android:textColor="@drawable/custom_dialog_button_selector"
+            android:textStyle="bold" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:background="#c8c8c8" />
+
+        <Button
+            android:id="@+id/extra"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#f7f7f7"
+            android:padding="5dp"
+            android:text="extra"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse"
+            android:textColor="@drawable/custom_dialog_button_selector"
+            android:textStyle="bold" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:background="#c8c8c8" />
+
+        <Button
+            android:id="@+id/negative"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#f7f7f7"
+            android:padding="5dp"
+            android:text="negative"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse"
+            android:textColor="@drawable/custom_dialog_button_selector"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+</LinearLayout>-->

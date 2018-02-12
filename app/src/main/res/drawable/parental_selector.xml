@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true"
+        android:drawable="@drawable/hover_parental_locked" /> <!-- pressed -->
+    <item android:state_focused="true"
+        android:drawable="@drawable/hover_parental_locked" /> <!-- focused -->
+    <item android:drawable="@drawable/select_parental_locked" /> <!-- default -->
+</selector>

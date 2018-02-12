@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    >
+<FrameLayout
+    android:layout_width="150dp"
+    android:layout_height="225dp"
+    android:id="@+id/movie_item_layout"
+    android:background="@drawable/movie_grid_selector"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    >
+    <!--<FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="5dp">-->
+
+       <!-- <View
+            android:id="@+id/white_border"
+            android:layout_width="150dp"
+            android:layout_height="215dp"
+            android:layout_gravity="center"
+            android:background="@drawable/border_background"
+            android:visibility="gone"/>-->
+        <LinearLayout
+            android:id="@+id/movie_item"
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="175dp"
+                android:layout_gravity="center">
+                <ImageView
+                    android:id="@+id/appimage"
+                    android:layout_width="match_parent"
+                    android:layout_height="175dp"
+                    android:padding="2dp"
+                    android:src="@drawable/placeholder"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"/>
+                <ImageView
+                    android:id="@+id/fav_image"
+                    android:focusable="false"
+                    android:visibility="gone"
+                    android:padding="2dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/hover_fav"
+                    android:layout_gravity="right"/>
+            </FrameLayout>
+
+
+
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/movie_text_selector"
+                android:gravity="center"
+                android:padding="2dp"
+                android:layout_gravity="center"
+                android:text="MOVIES"
+                android:minLines="2"
+                android:maxLines="2"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/show_more"
+            android:layout_width="140dp"
+            android:layout_height="215dp"
+            android:orientation="horizontal"
+            android:background="#2a2a2a"
+            android:padding="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/more_image"
+                android:focusable="false"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:padding="2dp"
+                android:scaleType="fitXY"
+                android:layout_gravity="center"
+                android:src="@drawable/plus_corrected"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+<!--</FrameLayout>-->
+
+
+</LinearLayout>

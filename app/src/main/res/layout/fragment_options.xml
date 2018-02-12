@@ -1,0 +1,70 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="maxxtv.movies.stb.Fragments.OptionsFragment"
+    android:background="@android:color/transparent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/gradient_border"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="15dp"
+            android:background="@color/menu_background">
+            <ImageButton
+                android:id="@+id/info_button"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_margin="20dp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:background="@drawable/info_selector"/>
+            <ImageButton
+                android:id="@+id/parental_button"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_margin="20dp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:background="@drawable/parental_selector"/>
+            <ImageButton
+                android:id="@+id/fav_button"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_margin="20dp"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:background="@drawable/fav_selector"/>
+
+            <!-- <ImageButton
+                 android:focusable="true"
+                 android:clickable="true"
+                 android:layout_margin="20dp"
+                 android:layout_width="80dp"
+                 android:layout_height="80dp"
+                 android:src="@drawable/watch_later_selector"/>-->
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/gradient_border"
+            android:rotation="180"/>
+    </LinearLayout>
+
+
+
+
+
+
+
+</FrameLayout>

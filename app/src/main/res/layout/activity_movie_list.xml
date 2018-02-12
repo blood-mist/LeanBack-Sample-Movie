@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#111111"
+    android:orientation="vertical"
+    android:padding="5dp"
+    tools:context="maxxtv.movies.stb.MovieListActivity">
+    <LinearLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/top_movies"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TOP MOVIES"
+                android:padding="10dp"
+                android:textColor="#ffffff"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:id="@+id/search_layout"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true">
+
+                <EditText
+                    android:id="@+id/search_text_sub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_et_search"
+                    android:ems="10"
+                    android:maxLines="1"
+                    android:imeOptions="actionSearch"
+                    android:maxWidth="100mm"
+                    android:padding="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:singleLine="true"
+                    android:textColor="#8dbdcf"
+                    android:textColorHint="#cdcdcd"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btn_search_sub"
+                    android:layout_width="27dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/selector_btn_search" />
+            </FrameLayout>
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/top_movies_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scrollbars="none" />
+
+            <TextView
+                android:id="@+id/topmovie_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:focusable="false"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/movies_unavailable"
+                android:textColor="#fff"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/subcategory_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/subcategory_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:scrollbars="none" />
+
+                <LinearLayout
+                    android:id="@+id/movie_list_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:focusable="false"
+                    android:id="@+id/movie_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/movies_unavailable"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/textColor"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/category_error_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/category_unavailable"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/textColor"
+                android:focusable="false"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/progressBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        android:visibility="gone">
+        <com.wang.avi.AVLoadingIndicatorView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            style="@style/AVLoadingIndicatorView"
+            android:layout_gravity="center"
+            app:indicatorColor="@color/color_text_silver"
+            app:indicatorName="BallSpinFadeLoaderIndicator"
+            />
+    </FrameLayout>
+
+</LinearLayout>
