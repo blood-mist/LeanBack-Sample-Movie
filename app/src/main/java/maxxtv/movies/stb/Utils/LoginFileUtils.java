@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 import maxxtv.movies.stb.Utils.common.LinkConfig;
 
 public class LoginFileUtils {
-	public static final String APP_CONFIG_FILE_NAME = "maxtv_mylogin";
+	public static final String APP_CONFIG_FILE_NAME = "androidtv_mylogin";
 
 	public static String getDisplayName() {
 		return displayName;
@@ -45,11 +45,11 @@ public class LoginFileUtils {
 	}
 
 	public static boolean reWriteLoginDetailsToFile(String macAddress,
-													String userEmai, String userPassword, String sessionId, String userId) {
+													String userEmail, String userPassword, String sessionId, String userId) {
 		if (Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED)) {
 
-			String st = macAddress + "\n" + userEmai + "\n" + userPassword + "\n" + sessionId + "\n" + userId;
+			String st = macAddress + "\n" + userEmail + "\n" + userPassword + "\n" + sessionId + "\n" + userId;
 
 			Logger.i("STRING_TO_WRITE", st);
 
@@ -97,7 +97,7 @@ public class LoginFileUtils {
 					String str = sb.toString().replace(",,", ",");
 					Logger.i("AA", str);
 					String[] both = str.split(",");
-					if (both[0].toString().equals(macAddress)) {
+					if (both[0].toString().equalsIgnoreCase(macAddress)) {
 						userEmail = both[1].toString();
 						userPassword = both[2].toString();
 						try {
@@ -178,5 +178,15 @@ public class LoginFileUtils {
 			return false;
 		}
 
+	}
+	public static void deleteLoginFile() {
+		if (Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
+			File externalStorageDir = Environment.getExternalStorageDirectory();
+			File myFile = new File(externalStorageDir, APP_CONFIG_FILE_NAME);
+			if (myFile.exists()) {
+				myFile.delete();
+			}
+		}
 	}
 }

@@ -40,7 +40,7 @@ import static maxxtv.movies.stb.EntryPoint.macAddress;
 public class MergedJson extends AsyncTask<Void, Void, String> {
 
     private static int RETRY_COUNT = 0;
-    EntryPoint entryPoint;
+    private EntryPoint entryPoint;
     String url;
 
     public MergedJson(EntryPoint entryPoint) {
@@ -107,7 +107,7 @@ public class MergedJson extends AsyncTask<Void, Void, String> {
                     String isapproved = dataObj.getString("activation_status");
                     String isactive = dataObj.getString("is_active");
                     if (isapproved.equals("1") && isactive.equals("1")) {
-                        if (LoginFileUtils.checkIfFileExists("maxtv_mylogin") &&
+                       /* if (LoginFileUtils.checkIfFileExists(LinkConfig.LOGIN_FILE) &&
                                 LoginFileUtils.checkIfFileExists(LinkConfig.TOKEN_CONFIG_FILE_NAME)) {
                             String authToken = LoginFileUtils.getAuthTokenFromFile();
                             String user_id = "", user_email = "";
@@ -118,14 +118,12 @@ public class MergedJson extends AsyncTask<Void, Void, String> {
                                 user_email = LoginFileUtils.getUserEmail();
 
                             String session_url = LinkConfig.getString(entryPoint, LinkConfig.UPDATE_SESSION) + "?platform=android-stb&uname=" + user_email + "&boxId=" + macAddress;
-                            new UpdateSession(entryPoint, user_id, authToken).execute(session_url);
-                        } else
+                            new UpdateSession(entryPoint, user_id, authToken).execute(session_url);*/
                             entryPoint.proceedLogin(displayName, uname);
                     } else {
                         int error_code = jObj.getInt("error");
                         String error_message = jObj.getString("message");
-
-
+                        LoginFileUtils.deleteLoginFile();
                         Intent i3 = new Intent(entryPoint, UnauthorizedAccess.class);
                         i3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         i3.putExtra("error_code", error_code);
@@ -149,7 +147,7 @@ public class MergedJson extends AsyncTask<Void, Void, String> {
                         i3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         i3.putExtra("error_code", error_code + "");
                         i3.putExtra("error_message", error_message);
-
+                        LoginFileUtils.deleteLoginFile();
                         entryPoint.startActivity(i3);
                         entryPoint.finish();
                     }

@@ -12,8 +12,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.os.PowerManager;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 
 
@@ -21,22 +23,28 @@ import android.view.View;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import maxxtv.movies.stb.BuildConfig;
 import maxxtv.movies.stb.EntryPoint;
 import maxxtv.movies.stb.Utils.CustomDialogManager;
 import maxxtv.movies.stb.Utils.Logger;
 
 public class ApkDownloader extends AsyncTask<String, Integer, File> {
-    ProgressDialog mProgressDialog;
+    private ProgressDialog mProgressDialog;
     InputStream is = null;
-    private Context context;
+    private WeakReference<Context> weakReference;
     private PowerManager.WakeLock mWakeLock;
     private String appName;
 
-    public ApkDownloader(Context context, String appName) {
-        this.context = context;this.appName=appName;
+    public ApkDownloader( WeakReference<Context> weakReference, String appName) {
+        this.weakReference = weakReference;
+        this.appName=appName;
+    }
+    private Context getContext(){
+        return weakReference.get();
     }
 
     @Override
@@ -111,11 +119,11 @@ public class ApkDownloader extends AsyncTask<String, Integer, File> {
             // e.toString());
             try {
                 mProgressDialog.dismiss();
-                ((Activity) context).runOnUiThread(new Runnable() {
+                ((Activity) getContext()).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         final CustomDialogManager error_dialog = new CustomDialogManager(
-                                context, CustomDialogManager.ALERT);
+                                getContext(), CustomDialogManager.ALERT);
                         error_dialog.build();
                         error_dialog.setMessage("Error: " , e.toString());
                         error_dialog.setPositiveButton("OK",
@@ -144,19 +152,19 @@ public class ApkDownloader extends AsyncTask<String, Integer, File> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-
-        mProgressDialog = new ProgressDialog(context);
-        mProgressDialog.setTitle(appName);
+        mProgressDialog = new ProgressDialog(getContext());
+        mProgressDialog.setTitle(appName.toUpperCase());
         mProgressDialog.setMessage("Downloading the update");
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.setCancelable(false);
 
-        PowerManager pm = (PowerManager) context
+        PowerManager pm = (PowerManager) getContext()
                 .getSystemService(Context.POWER_SERVICE);
+        assert pm != null;
         mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass()
                 .getName());
-        mWakeLock.acquire();
+        mWakeLock.acquire(10*60*1000L /*10 minutes*/);
 
         mProgressDialog.show();
     }
@@ -172,23 +180,26 @@ public class ApkDownloader extends AsyncTask<String, Integer, File> {
         // "Saved File at: " + savedFile.toString());
         if (savedFile.exists()) {
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(savedFile),
-                        "application/vnd.android.package-archive");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-
-                /**
-                 * If this class is run from the loading class then exit the
-                 * application
-                 */
+                if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(savedFile),
+                            "application/vnd.android.package-archive");
+                    getContext().startActivity(intent);
+                    ((Activity) getContext()).finish();
+                }else{
+                    Uri apkUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", savedFile);
+                    Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                    intent.setData(apkUri);
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    getContext().startActivity(intent);
+                }
 
 
             } catch (Exception e) {
                 Logger.printStackTrace(e);
                 Logger.e("APK DOWNLOADER:", "Exception: " + e.getMessage());
                 CustomDialogManager downloadException = new CustomDialogManager(
-                        context, CustomDialogManager.ALERT);
+                        getContext(), CustomDialogManager.ALERT);
                 downloadException.build();
                 downloadException.setTitle("Download");
                 downloadException.setMessage("Exception: " , e.getMessage());
@@ -202,18 +213,18 @@ public class ApkDownloader extends AsyncTask<String, Integer, File> {
 
             }
         }
-        if (context.getClass().getName()
+        if (getContext().getClass().getName()
                 .equals(EntryPoint.class.getName()))
-            ((Activity) context).finish();
+            ((Activity) getContext()).finish();
     }
 
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
 
-        mProgressDialog.setIndeterminate(false);
-        mProgressDialog.setMax(100);
-        mProgressDialog.setProgress(values[0]);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressDialog.setCancelable(false);
     }
 
 }

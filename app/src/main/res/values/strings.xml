@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">MaxxTV Movies</string>
-    <string name="loading_app">Loading...</string>
+    <string name="app_name">Movies</string>
+    <string name="loading_app">Loading…</string>
     <string name="label_version">Version</string>
     <string name="txt_empty" />
     <string name="label_password">Password</string>
@@ -17,7 +17,7 @@
     <string name="msg_feature_not_available">This feature is not available in your device</string>
     <string name="err_server_unreachable">Couldnot make a reliable connection to server.Please tr again.</string>
     <string name="err_json_exception">The data couldn\'t be fetched.Please try again.</string>
-    <string name="err_unexpected">Unexpected error occured!</string>
+    <string name="err_unexpected">Unexpected error occurred!</string>
     <string name="btn_retry">Retry</string>
     <string name="register_success_message">You have successfully registered to our system. Please check your email and click the activation link to complete your registration. \\n\\nYou can login to the system only after our team reviews your request once your have activated your account. This process might take time so you are requested to wait our email confirmation of your Registration approval.\\nIf you did not receive any email or face any other issue regarding registration process, please email us at info@artemisiaiofcaria.com</string>
     <string name="msg_update">A new version of this application is available.</string>
@@ -50,4 +50,8 @@
     <string name="no_internet_body">Reliable connection to Server failed.\nPlease check your Internet connection and try again.</string>
     <string name="update_found">Update Found</string>
     <string name="update_message">A new version of this application is available.</string>
+    <string name="message_permissions"><![CDATA[AndroidTV Movies needs an access to your <b>Extenal Storage</b>.]]></string>
+    <string name="loading_movies">Loading Movies</string>
+    <string name="connection_failed">Connection Failure</string>
+    <string name="sign_in">Sign In</string>
 </resources>

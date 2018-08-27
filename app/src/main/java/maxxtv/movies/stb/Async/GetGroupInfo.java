@@ -23,6 +23,7 @@ import maxxtv.movies.stb.Utils.MyEncryption;
 import maxxtv.movies.stb.Utils.common.AppConfig;
 import maxxtv.movies.stb.Utils.common.GetMac;
 import maxxtv.movies.stb.Utils.common.LinkConfig;
+import maxxtv.movies.stb.Utils.customException.LoginEmptyException;
 
 /**
  * Created by NITV on 20/09/2016.
@@ -72,7 +73,7 @@ public class GetGroupInfo extends AsyncTask<String, Void, String> {
                 public void onClick(View view) {
                     Intent i = ((Activity) context).getBaseContext().getPackageManager()
                             .getLaunchIntentForPackage(((Activity) context).getBaseContext().getPackageName());
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
                     noInternet.dismiss();
                     context.startActivity(i);
 
@@ -131,6 +132,16 @@ public class GetGroupInfo extends AsyncTask<String, Void, String> {
                 } catch (JSONException e1) {
                     e1.printStackTrace();
                     CustomDialogManager.ReUsedCustomDialogs.showDataNotFetchedAlert(context);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if(e instanceof LoginEmptyException){
+                    LoginFileUtils.deleteLoginFile();
+                    Intent i = ((Activity) context).getBaseContext().getPackageManager()
+                            .getLaunchIntentForPackage(((Activity) context).getBaseContext().getPackageName());
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(i);
+                    ((Activity) context).finish();
                 }
             }
 

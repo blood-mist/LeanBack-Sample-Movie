@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -24,9 +25,9 @@ import maxxtv.movies.stb.Utils.PackageUtils;
 
 
 public class MarketAppDetailParser {
-    public static String MyAccountAppPackage = "maxxtv.myaccount.stb"
+    public static String MyAccountAppPackage = "androidtv.myaccount.stb"
             .trim();
-    public static String Youtube = "com.google.android.youtube.tv";
+    public static String Youtube = "com.google.android.youtube";
     public static HashMap<String, MarketApp> APKs;
     public static ArrayList<String> packageNames;
     private Context context;
@@ -35,8 +36,8 @@ public class MarketAppDetailParser {
     public MarketAppDetailParser(Context context, String jsonstr) {
         this.context = context;
         this.jsonstr = jsonstr;
-        APKs = new HashMap<String, MarketApp>();
-        packageNames = new ArrayList<String>();
+        APKs = new HashMap<>();
+        packageNames = new ArrayList<>();
     }
 
     public static ArrayList<MarketApp> ApkListWithoutCurrentApk(Context context) {
@@ -80,7 +81,7 @@ public class MarketAppDetailParser {
                 Logger.d("package to install", packageName);
                 Logger.d("app to install", APKs.get(packageName).getName());
                 MarketApp ma = APKs.get(packageName);
-                new ApkDownloader(context, APKs.get(packageName).getName()).execute(APKs.get(packageName)
+                new ApkDownloader(new WeakReference<>(context), APKs.get(packageName).getName()).execute(APKs.get(packageName)
                                                                                             .getAppDownloadLink());
 
 

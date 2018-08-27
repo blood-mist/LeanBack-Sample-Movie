@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 
 import maxxtv.movies.stb.Entity.Movie;
+import maxxtv.movies.stb.GlideApp;
 import maxxtv.movies.stb.R;
 
 ;
@@ -66,9 +67,9 @@ public class MoviesListAdapter extends ArrayAdapter<Movie> {
         Movie movie=itemList.get(position);
         holder.category_title.setText(movie.getMovie_name());
         String thumbUrl=movie.getMovie_logo();
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(thumbUrl)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .placeholder(R.drawable.youtube)
                 .into(holder.appImage);
         return convertView;

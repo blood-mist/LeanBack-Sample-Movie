@@ -21,6 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 
 import maxxtv.movies.stb.Entity.Movie;
+import maxxtv.movies.stb.GlideApp;
 import maxxtv.movies.stb.MovieCategoryActivity;
 import maxxtv.movies.stb.MoviePlayCustomController;
 import maxxtv.movies.stb.R;
@@ -123,9 +124,9 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
         }else{
             holder.favImage.setVisibility(View.GONE);
         }*/
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(thumbUrl)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .override(300, 270)
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageItems);
@@ -194,7 +195,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                             ViewCompat.setElevation(itemView, 1);
                             movieItem.setScaleX(1.06f);
                             movieItem.setScaleY(1.03f);
-                            title.setBackgroundColor(ContextCompat.getColor(context, R.color.text_bg_color));
+                            title.setBackground(ContextCompat.getDrawable(context, R.drawable.main_gradient));
                         }
 //                       borderView.setVisibility(View.VISIBLE);
                     } else {
@@ -207,7 +208,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                             ViewCompat.setElevation(itemView, 0);
                             movieItem.setScaleX(1.0f);
                             movieItem.setScaleY(1.0f);
-                            title.setBackgroundColor(ContextCompat.getColor(context, R.color.item_unselectedd));
+                            title.setBackground(ContextCompat.getDrawable(context, R.color.item_unselectedd));
 //                        borderView.setVisibility(View.GONE);
 
 //

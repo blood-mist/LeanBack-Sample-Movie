@@ -1,17 +1,20 @@
 package maxxtv.movies.stb.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 
 import maxxtv.movies.stb.Entity.MovieCategoryParent;
+import maxxtv.movies.stb.GlideApp;
 import maxxtv.movies.stb.MovieListActivity;
 import maxxtv.movies.stb.R;
 
@@ -101,9 +105,9 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
         holder.title.setText(itemData.getCategoryName());
         // Here you apply the animation when the view is bound
         //       UrlImageViewHelper.setUrlDrawable(holder.imageItems, thumbUrl, R.drawable.placeholder, 3000000);
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(thumbUrl)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .override(300,270)
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageItems);
@@ -144,15 +148,13 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
 
 //            reflectingImage = (ImageView) itemView.findViewById(R.id.reflectiveImageView);
             itemlayout = (FrameLayout) itemView.findViewById(R.id.item_layout);
-//            reflectingText = (ImageView) itemView.findViewById(R.id.reflectiveImageText);;
-            //    itemlayout.setNextFocusRightId(itemView.getNextFocusRightId());
 
             itemlayout.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
                         ViewCompat.setElevation(itemView, 1);
-                        title.setBackgroundColor(ContextCompat.getColor(context,R.color.text_bg_color));
+                        title.setBackground(ContextCompat.getDrawable(context,R.drawable.main_gradient));
                         imageShadeView.setVisibility(View.INVISIBLE);
                         textShadeView.setVisibility(View.INVISIBLE);
 
@@ -160,7 +162,7 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
                         ViewCompat.setElevation(itemView, 0);
                         imageShadeView.setVisibility(View.VISIBLE);
                         textShadeView.setVisibility(View.VISIBLE);
-                        title.setBackgroundColor(ContextCompat.getColor(context,R.color.item_unselectedd));
+                        title.setBackground(ContextCompat.getDrawable(context,R.color.item_unselectedd));
 //
 
                     }

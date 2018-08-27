@@ -21,13 +21,14 @@ import maxxtv.movies.stb.Utils.LoginFileUtils;
 public class LinkConfig {
     public static final int ALLOW_COUNTRY = R.string.allow_country;
     public static final int PARENTAL_URL = R.string.parental_url;
-    public static String BASE_URL = "https://maxxtvbox.net/api/v1/";
+    public static final String LOGIN_FILE ="androidtv_mylogin" ;
+    public static String BASE_URL = "https://middleware.yourman.info/api/v1/";
     public static int CHECK_MAC = R.string.check_mac;
-    public static String CHECK_IF_SERVER_RECHABLE = "maxxtvbox.net";
+    public static String CHECK_IF_SERVER_RECHABLE = "https://middleware.yourman.info";
     public static final int LOGIN_BUTTON_CLICK = R.string.login_click ;
     public static final int SEARCH_BUTTON_CLICK=R.string.search_url;
     public static final int CHECK_BEFORE_LOGIN_URL = R.string.check_user ;
-    public static String LINK_SEVER_APKs = "https://maxxtvbox.net/market_app_info/api/market_app_info.php";
+    public static String LINK_SEVER_APKs = "https://middleware.yourman.info/market_app_info/api/market_app_info.php";
     public static final int GET_UTC = R.string.get_utc;
     public static final int UPDATE_SESSION = R.string.update_session;
     public static final int GET_GROUP = R.string.get_group_info;
@@ -53,9 +54,7 @@ public class LinkConfig {
             sessionId = LoginFileUtils.getSessionId();
             Logger.e("session id in hash", sessionId.trim());
 
-            if (sessionId != null || GroupDataParser.groupData.getUserId() + "".trim() != null) {
-
-                String SecretKey = "123456789";
+            String SecretKey = "123456789";
 
 /*
 				  Calendar calendar = Calendar.getInstance(); long currentTime
@@ -65,19 +64,18 @@ public class LinkConfig {
 				 /*//**/
 
 
-                Logger.i("utc time ", utc);
-                String stringToMD5 = SecretKey + sessionId + GroupDataParser.groupData.getUserId() + "".trim()+ utc;
-                String hexString = md5(stringToMD5);
-                return "utc=" + utc.trim() + "&userId=" + GroupDataParser.groupData.getUserId() + "".trim()
-                        + "&hash=" + hexString.toString();
-            }
+            Logger.i("utc time ", utc);
+            String stringToMD5 = SecretKey + sessionId + GroupDataParser.groupData.getUserId() + "".trim()+ utc;
+            String hexString = md5(stringToMD5);
+            return "utc=" + utc.trim() + "&userId=" + GroupDataParser.groupData.getUserId() + "".trim()
+                    + "&hash=" + hexString;
 
         }
         return null;
 
     }
 
-    public static final String md5(final String s) {
+    private static String md5(final String s) {
         try {
             // Create MD5 Hash
             MessageDigest digest = MessageDigest
@@ -86,11 +84,11 @@ public class LinkConfig {
             byte messageDigest[] = digest.digest();
 
             // Create Hex String
-            StringBuffer hexString = new StringBuffer();
-            for (int i = 0; i < messageDigest.length; i++) {
-                String h = Integer.toHexString(0xFF & messageDigest[i]);
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                StringBuilder h = new StringBuilder(Integer.toHexString(0xFF & aMessageDigest));
                 while (h.length() < 2)
-                    h = "0" + h;
+                    h.insert(0, "0");
                 hexString.append(h);
             }
             return hexString.toString();

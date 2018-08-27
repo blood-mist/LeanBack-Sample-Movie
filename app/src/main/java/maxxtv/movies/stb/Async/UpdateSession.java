@@ -122,6 +122,7 @@ public class UpdateSession extends AsyncTask<String, Void, String> {
 
                     }
                 } catch (JSONException e1) {
+
                     e1.printStackTrace();
                     CustomDialogManager.ReUsedCustomDialogs.showDataNotFetchedAlert(context);
                 }

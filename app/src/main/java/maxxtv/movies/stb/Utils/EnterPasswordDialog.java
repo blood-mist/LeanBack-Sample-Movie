@@ -134,7 +134,7 @@ public class EnterPasswordDialog {
 
                 } else {
                     Toast.makeText(context, "Pin Code does not match", Toast.LENGTH_SHORT).show();
-                    if (context.getClass().getName().equals(MoviePlayCustomController.class.getName()))
+                    if (context.getClass().getName().equals(MoviePlayCustomController.class.getName()) && flag_to_end_activity)
                         ((MoviePlayCustomController) context).finish();
 
                 }

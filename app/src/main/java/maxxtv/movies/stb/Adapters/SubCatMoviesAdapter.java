@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 
 import maxxtv.movies.stb.Entity.Movie;
+import maxxtv.movies.stb.GlideApp;
 import maxxtv.movies.stb.R;
 import maxxtv.movies.stb.Utils.Logger;
 
@@ -53,9 +54,9 @@ public class SubCatMoviesAdapter extends ArrayAdapter<Movie> {
 			holder.movieTitle.setText(movie.getMovie_name());
 			// Here you apply the animation when the view is bound
 			//       UrlImageViewHelper.setUrlDrawable(holder.imageItems, thumbUrl, R.drawable.placeholder, 3000000);
-			Glide.with(context)
+			GlideApp.with(context)
 					.load(thumbUrl)
-					.diskCacheStrategy(DiskCacheStrategy.RESULT)
+					.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
 					.override(300,270)
 					.placeholder(R.drawable.placeholder)
 					.into(holder.movieImage);

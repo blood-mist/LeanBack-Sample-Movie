@@ -1,13 +1,17 @@
 package maxxtv.movies.stb.Async;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.view.View;
 
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import maxxtv.movies.stb.BuildConfig;
+import maxxtv.movies.stb.Entity.VersionCheckEvent;
 import maxxtv.movies.stb.EntryPoint;
 import maxxtv.movies.stb.R;
 import maxxtv.movies.stb.UnauthorizedAccess;
@@ -79,8 +83,9 @@ public class AllowCountry extends AsyncTask<Void, Void, String> {
                 JSONObject allow= jo.getJSONObject("allow");
                 if (allow.getBoolean("allow")) {
                     Logger.d("AllowCountry","TRUE");
+                    EventBus.getDefault().post(new VersionCheckEvent());
 
-                    new ApkInServer(activity).execute(LinkConfig.LINK_SEVER_APKs+"?macAddress="+ EntryPoint.macAddress);
+//                    new ApkInServer(activity).execute(LinkConfig.LINK_SEVER_APKs+"?macAddress="+ EntryPoint.macAddress,(activity).getApplicationContext().getPackageName(), String.valueOf(BuildConfig.VERSION_CODE));
 
 
                 } else {

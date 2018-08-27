@@ -49,20 +49,20 @@ public class CustomDialogManager {
     private String version = "", macAddress = "", title = "", message = "";
 
     private Dialog d;
-    private TextView alertTitle, errorCodeTextView,MacTextView, versionTextView, messageTextView;
+    private TextView alertTitle, errorCodeTextView, MacTextView, versionTextView, messageTextView;
     private LinearLayout macAndVersion;
     private LinearLayout buttonLayout;
     private Button positive, neutral, negative, extra;
     private ImageView error_image;
     private ProgressBar progressBar;
     private View viewBelowMac, viewAboveButtons;
-    String error_code="";
+    String error_code = "";
 
     FrameLayout custom_dialog_layout;
     ImageButton close_btn;
-    Typeface light,medium,semibold,regular;
+    Typeface light, medium, semibold, regular;
     AVLoadingIndicatorView progressBarLayout;
-    TextView MacTextViewFixed,versionTextViewFixed;
+    TextView MacTextViewFixed, versionTextViewFixed;
 
     private int type = DEFAULT;
 
@@ -123,7 +123,7 @@ public class CustomDialogManager {
     }
 
     private void findViewbyId() {
-        custom_dialog_layout=(FrameLayout)d.findViewById(R.id.custom_dialog_layout);
+        custom_dialog_layout = (FrameLayout) d.findViewById(R.id.custom_dialog_layout);
 
 
         alertTitle = (TextView) d.findViewById(R.id.dialog_heading);
@@ -151,9 +151,9 @@ public class CustomDialogManager {
         neutral = (Button) d.findViewById(R.id.neutral);
 //        extra = (Button) d.findViewById(R.id.extra);
         negative = (Button) d.findViewById(R.id.negative);
-        close_btn=(ImageButton)d.findViewById(R.id.closeButton);
-        progressBar=(ProgressBar)d.findViewById(R.id.progressBar);
-        progressBarLayout=(AVLoadingIndicatorView) d.findViewById(R.id.custom_progress_bar);
+        close_btn = (ImageButton) d.findViewById(R.id.closeButton);
+        progressBar = (ProgressBar) d.findViewById(R.id.progressBar);
+        progressBarLayout = (AVLoadingIndicatorView) d.findViewById(R.id.custom_progress_bar);
     }
 
     private void hidePriorDialogUI() {
@@ -165,7 +165,7 @@ public class CustomDialogManager {
         buttonLayout.setVisibility(View.GONE);
         positive.setVisibility(View.GONE);
         neutral.setVisibility(View.GONE);
-       // extra.setVisibility(View.GONE);
+        // extra.setVisibility(View.GONE);
         negative.setVisibility(View.GONE);
     }
 
@@ -237,6 +237,7 @@ public class CustomDialogManager {
             }
         });
     }
+
     public void dismissDialogOnBackPressed(final Context context) {
         d.setOnKeyListener(new DialogInterface.OnKeyListener() {
 
@@ -255,6 +256,7 @@ public class CustomDialogManager {
             }
         });
     }
+
     public void addDissmissButtonToDialogandPlay(final Context context, final int id, final boolean b) {
         setExtraButton(
                 context.getString(R.string.btn_dismiss),
@@ -263,7 +265,7 @@ public class CustomDialogManager {
                     @Override
                     public void onClick(View v) {
                         dismiss();
-                        ( (MoviePlayCustomController)context).checkToLoadMovieLink((Activity) context, id, b);
+                        ((MoviePlayCustomController) context).checkToLoadMovieLink((Activity) context, id, b);
                     }
                 });
 
@@ -278,7 +280,7 @@ public class CustomDialogManager {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_BACK:
                         d.dismiss();
-                        ( (MoviePlayCustomController)context).checkToLoadMovieLink((Activity) context, id, b);
+                        ((MoviePlayCustomController) context).checkToLoadMovieLink((Activity) context, id, b);
                         return true;
 
                     default:
@@ -287,6 +289,7 @@ public class CustomDialogManager {
             }
         });
     }
+
     public Dialog getInnerObject() {
         return d;
     }
@@ -308,6 +311,7 @@ public class CustomDialogManager {
             }
         });
     }
+
     public void exitApponBackPress() {
         d.setOnKeyListener(new DialogInterface.OnKeyListener() {
 
@@ -325,6 +329,7 @@ public class CustomDialogManager {
             }
         });
     }
+
     public Button setPositiveButton(String btn_text,
                                     View.OnClickListener onClickListener) {
         viewAboveButtons.setVisibility(View.VISIBLE);
@@ -372,9 +377,9 @@ public class CustomDialogManager {
         alertTitle.setVisibility(View.VISIBLE);
     }
 
-    public void setMessage(String error_code,String message) {
+    public void setMessage(String error_code, String message) {
         this.message = message;
-        this.error_code=error_code;
+        this.error_code = error_code;
         /**
          * if set message is done before build it should be found again
          */
@@ -450,7 +455,7 @@ public class CustomDialogManager {
     }
 
     public ImageButton setExtraButton(String btn_text,
-                                 View.OnClickListener onClickListener) {
+                                      View.OnClickListener onClickListener) {
         close_btn.setVisibility(View.VISIBLE);
         close_btn.setOnClickListener(onClickListener);
         return close_btn;
@@ -469,8 +474,8 @@ public class CustomDialogManager {
                         dismiss();
                         if (context.getClass().getName()
                                 .equals(
-                                        MovieCategoryActivity.class.getName())||context.getClass().getName()
-                                .equals( MoviePlayCustomController.class.getName())
+                                        MovieCategoryActivity.class.getName()) || context.getClass().getName()
+                                .equals(MoviePlayCustomController.class.getName())
                                 )
 
                             ((Activity) context).finish();
@@ -482,12 +487,13 @@ public class CustomDialogManager {
     public void dismiss() {
         d.dismiss();
     }
+
     public void setErrorCode(String error_codesdf) {
         this.error_code = error_codesdf;
-        errorCodeTextView=(TextView)d.findViewById(R.id.txt_error_code);
-        if(error_code.equalsIgnoreCase("null") || error_code.equals("")){
+        errorCodeTextView = (TextView) d.findViewById(R.id.txt_error_code);
+        if (error_code.equalsIgnoreCase("null") || error_code.equals("")) {
             errorCodeTextView.setVisibility(View.GONE);
-        }else {
+        } else {
             errorCodeTextView.setText("Error Code:" + error_code);
         }
     }
@@ -497,36 +503,30 @@ public class CustomDialogManager {
         // Dialog to show when required data not available
         public static CustomDialogManager showDataNotFetchedAlert(final Context context) {
             final CustomDialogManager error = new CustomDialogManager(context,
-                                                                      CustomDialogManager.ALERT);
+                    CustomDialogManager.ALERT);
             error.build();
             error.showMacAndVersion();
-            error.setMessage("null",context.getString(R.string.err_json_exception));
+            error.setMessage("null", context.getString(R.string.err_json_exception));
             error.addDissmissButtonToDialog();
             error.dismissDialogOnBackPressed();
-            if (context
-                    .getClass()
-                    .getName()
-                    .equals(MovieCategoryActivity.class.getName())
-                    ) {
-                error.setNegativeButton(context.getString(R.string.btn_relaunch), new View.OnClickListener() {
+            error.setNegativeButton(context.getString(R.string.btn_relaunch), new View.OnClickListener() {
 
-                    @Override
-                    public void onClick(View arg0) {
-                        error.dismiss();
-                        Intent i = ((ContextWrapper) context)
-                                .getBaseContext()
-                                .getPackageManager()
-                                .getLaunchIntentForPackage(
-                                        ((ContextWrapper) context).getBaseContext()
-                                                .getPackageName());
-                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        context.startActivity(i);
+                @Override
+                public void onClick(View arg0) {
+                    error.dismiss();
+                    Intent i = ((ContextWrapper) context)
+                            .getBaseContext()
+                            .getPackageManager()
+                            .getLaunchIntentForPackage(
+                                    ((ContextWrapper) context).getBaseContext()
+                                            .getPackageName());
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    context.startActivity(i);
 
-                        ((Activity) context).finish();
+                    ((Activity) context).finish();
 
-                    }
-                });
-            }
+                }
+            });
             error.show();
             return error;
         }
@@ -537,7 +537,7 @@ public class CustomDialogManager {
             noInternet.build();
             noInternet.getInnerObject().setCancelable(true);
             noInternet.setTitle(context.getString(R.string.app_name));
-            noInternet.setMessage("E 025",context.getString(R.string.err_server_unreachable));
+            noInternet.setMessage("E 025", context.getString(R.string.err_server_unreachable));
             noInternet.show();
 
             noInternet.addDissmissButtonToDialog();
@@ -550,17 +550,17 @@ public class CustomDialogManager {
                         Intent LaunchIntent = context.getPackageManager()
                                 .getLaunchIntentForPackage("com.newitventure.wod.mynitvsetting");
                         context.startActivity(LaunchIntent);
-                    }catch (Exception e) {
-                    Intent intent = new Intent(
-                            android.provider.Settings.ACTION_SETTINGS);
-                    context.startActivity(intent);
+                    } catch (Exception e) {
+                        Intent intent = new Intent(
+                                android.provider.Settings.ACTION_SETTINGS);
+                        context.startActivity(intent);
                     }
                 }
             });
 
 
             if (context.getClass().getName().equals(MovieCategoryActivity.class.getName())
-                    ||context.getClass().getName().equals(MovieListActivity.class.getName())) {
+                    || context.getClass().getName().equals(MovieListActivity.class.getName())) {
 
                 noInternet.finishActivityonDismissPressed(context);
                 noInternet.finishActivityOnBackPressed(context);
@@ -593,7 +593,7 @@ public class CustomDialogManager {
             CustomDialogManager featureNotAvailable = new CustomDialogManager(context, CustomDialogManager.MESSAGE);
             featureNotAvailable.build();
             featureNotAvailable.showMacAndVersion();
-            featureNotAvailable.setMessage("null",context.getString(R.string.msg_feature_not_available));
+            featureNotAvailable.setMessage("null", context.getString(R.string.msg_feature_not_available));
             featureNotAvailable.addDissmissButtonToDialog();
             featureNotAvailable.dismissDialogOnBackPressed();
             featureNotAvailable.getInnerObject().setCancelable(true);
@@ -610,8 +610,8 @@ public class CustomDialogManager {
                     .append("\n").append(jo.getString("error_message"));
             CustomDialogManager parseError = new CustomDialogManager(context, CustomDialogManager.MESSAGE);
             parseError.build();
-           // parseError.setMessage(sb.toString());
-            parseError.setMessage(jo.getString("error_code"),jo.getString("error_message"));
+            // parseError.setMessage(sb.toString());
+            parseError.setMessage(jo.getString("error_code"), jo.getString("error_message"));
             parseError.addDissmissButtonToDialog();
             parseError.dismissDialogOnBackPressed();
             parseError.getInnerObject().setCancelable(true);

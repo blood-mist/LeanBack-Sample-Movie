@@ -11,7 +11,7 @@
         android:id="@+id/img_screenSaver"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/screen_saver"
+        android:background="@drawable/screensaver"
         android:scaleType="fitXY"/>
 
     <TextView

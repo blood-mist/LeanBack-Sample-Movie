@@ -50,7 +50,7 @@ public class ScreenSaverActivity extends Activity {
         txtTime = (TextView) findViewById(R.id.text_time);
         txtTime.setVisibility(View.GONE);
         Bundle bundle = getIntent().getExtras();
-        imgScreenSaver.setImageResource(R.drawable.screen_saver);
+        imgScreenSaver.setImageResource(R.drawable.screensaver);
         if (ApplicationMain.screenSaverImageList.size() <= 1)
             new LoadScreenSaverImageLinks().execute();
 //        changePositionForTextView();
@@ -80,16 +80,16 @@ public class ScreenSaverActivity extends Activity {
                         @Override
                         public void run() {
                             if (ApplicationMain.screenSaverImageList.size() > 1) {
-                                    Glide.with(ScreenSaverActivity.this)
+                                    GlideApp.with(ScreenSaverActivity.this)
                                             .load( ApplicationMain.screenSaverImageList.get(random.nextInt(
                                                     ApplicationMain.screenSaverImageList.size()
                                             )))
-                                            .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                                             .skipMemoryCache(false)
-                                            .error(R.drawable.screen_saver)
+                                            .error(R.drawable.screensaver)
                                             .into(imgScreenSaver);
                             } else {
-                                imgScreenSaver.setImageResource(R.drawable.screen_saver);
+                                imgScreenSaver.setImageResource(R.drawable.screensaver);
                             }
 
 

@@ -50,6 +50,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -315,7 +316,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                                      final int movieId, final boolean flag_to_end_activity) {
         this.imdbGlobal = null;
 
-        Movie toLoadMovie= realm.where(Movie.class).equalTo("movie_id", movieId).findFirst();
+        Movie toLoadMovie = realm.where(Movie.class).equalTo("movie_id", movieId).findFirst();
 
         movieName = toLoadMovie.getMovie_name();
         overview = toLoadMovie.getMovie_description();
@@ -369,7 +370,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                             parentalWarning.dismiss();
                             if (checkPinStatus()) {
                                 EnterPasswordDialog.showParentalControlPasswordDialogToPlayMovie(context,
-                                        movieId, flag_to_end_activity, authToken);
+                                        movieId, true, authToken);
                             } else {
                                 ParentalLockUtils.changeMovieParentalStatus(MoviePlayCustomController.this, movieId, authToken);
                             }
@@ -420,7 +421,8 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         EventBus.getDefault().unregister(this);
         try {
 //            timer.cancel();
-        }catch (NullPointerException ignored){}
+        } catch (NullPointerException ignored) {
+        }
         myHandler.removeCallbacks(null);
         finish();
 
@@ -906,7 +908,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         myHandler.postDelayed(UpdateSeekbar, 100);
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
-        Runnable saveDuration=new Runnable() {
+        Runnable saveDuration = new Runnable() {
             @Override
             public void run() {
                 if (player.isPlaying()) {
@@ -933,7 +935,6 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         service.scheduleAtFixedRate(saveDuration, 0, 10, TimeUnit.SECONDS);
       /*  timer = new Timer();
         timer.schedule(timerTask, 2*60*1000,30*60*1000);*/
-
 
 
     }
@@ -1321,7 +1322,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
             if (result.equalsIgnoreCase(DownloadUtil.NotOnline) || result.equalsIgnoreCase(DownloadUtil.ServerUnrechable)) {
                 final CustomDialogManager noInternet = new CustomDialogManager(context, CustomDialogManager.ALERT);
                 noInternet.build();
-                noInternet.setTitle(getString(R.string.no_internet_title)  );
+                noInternet.setTitle(getString(R.string.connection_failed));
                 noInternet.setMessage("", getString(R.string.no_internet_body));
                 noInternet.getInnerObject().setCancelable(false);
                 noInternet.finishActivityonDismissPressed(MoviePlayCustomController.this);
@@ -1379,7 +1380,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                                     videoIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 }
                                 ((Activity) context).startActivityForResult(videoIntent, 1001
-                                            /*STANDALONE_PLAYER_REQUEST_CODE*/);
+                                        /*STANDALONE_PLAYER_REQUEST_CODE*/);
                             } else {
                                 Toast.makeText(context, "Player is not supported in this device", Toast.LENGTH_LONG).show();
                                 finish();
@@ -1444,7 +1445,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                                     @Override
                                     public void onClick(View view) {
                                         Intent entryPointIntent = new Intent(context, EntryPoint.class);
-                                        entryPointIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        entryPointIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         invalidTokenDialog.dismiss();
                                         context.startActivity(entryPointIntent);
 
@@ -1461,8 +1462,6 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                         }
 
                     }
-
-
 
 
                 }
@@ -1487,7 +1486,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                         @Override
                         public void onClick(View view) {
                             youtubeUpdateDailog.dismiss();
-                            new ApkDownloader(context, MarketAppDetailParser.APKs.get(MarketAppDetailParser.Youtube).getName()).execute(MarketAppDetailParser.APKs.get(MarketAppDetailParser.Youtube).getAppDownloadLink());
+                            new ApkDownloader(new WeakReference<Context>(context), MarketAppDetailParser.APKs.get(MarketAppDetailParser.Youtube).getName()).execute(MarketAppDetailParser.APKs.get(MarketAppDetailParser.Youtube).getAppDownloadLink());
                         }
                     });
                     youtubeUpdateDailog.setNegativeButton("LATER", new View.OnClickListener() {
@@ -1518,7 +1517,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                     @Override
                     public void onClick(View view) {
                         youtubeNotInstalled.dismiss();
-                        new ApkDownloader(context, MarketAppDetailParser.APKs.get(MarketAppDetailParser.Youtube).getName()).execute(MarketAppDetailParser.APKs.get(MarketAppDetailParser.Youtube).getAppDownloadLink());
+                        new ApkDownloader(new WeakReference<Context>(context), MarketAppDetailParser.APKs.get(MarketAppDetailParser.Youtube).getName()).execute(MarketAppDetailParser.APKs.get(MarketAppDetailParser.Youtube).getAppDownloadLink());
                     }
                 });
                 youtubeNotInstalled.getInnerObject().setCancelable(true);

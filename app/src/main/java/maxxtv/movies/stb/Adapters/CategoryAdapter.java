@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 ;import maxxtv.movies.stb.Entity.Movie;
 import maxxtv.movies.stb.Entity.MovieCategoryParent;
+import maxxtv.movies.stb.GlideApp;
 import maxxtv.movies.stb.R;
 import maxxtv.movies.stb.Utils.Logger;
 
@@ -65,9 +66,9 @@ public class CategoryAdapter extends ArrayAdapter<Movie> {
         }
         MovieCategoryParent movie=itemList.get(position);
         String thumbUrl=movie.getCategoryImageLink();
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(thumbUrl)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .placeholder(R.drawable.youtube)
                 .into(holder.appImage);
         holder.category_title.setText(movie.getCategoryName());

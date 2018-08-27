@@ -1,7 +1,9 @@
 package maxxtv.movies.stb;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,29 +40,37 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.ref.WeakReference;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Stack;
 
 import maxxtv.movies.stb.Async.ApkDownloader;
+import maxxtv.movies.stb.Async.ApkInServer;
 import maxxtv.movies.stb.Async.MergedJson;
 import maxxtv.movies.stb.Async.UpdateSession;
 import maxxtv.movies.stb.Async.ValidMacAddress;
 import maxxtv.movies.stb.Entity.MarketApp;
+import maxxtv.movies.stb.Entity.VersionCheckEvent;
 import maxxtv.movies.stb.Parser.MarketAppDetailParser;
 import maxxtv.movies.stb.Utils.CustomDialogManager;
 import maxxtv.movies.stb.Utils.DownloadUtil;
 import maxxtv.movies.stb.Utils.Logger;
 import maxxtv.movies.stb.Utils.LoginFileUtils;
 import maxxtv.movies.stb.Utils.MyEncryption;
+import maxxtv.movies.stb.Utils.PackageUtils;
 import maxxtv.movies.stb.Utils.common.AppConfig;
 import maxxtv.movies.stb.Utils.common.GetMac;
 import maxxtv.movies.stb.Utils.common.LinkConfig;
 
 
-public class EntryPoint extends Activity {
+public class EntryPoint extends Activity implements PermissionUtils.PermissionResultCallback {
 
 
+    private static final int VERSION_CHECK = 1;
+    private static final int VALID_USER = 2;
     /**
      * Everthing that is needed for user verification is done here before the app loads
      */
@@ -73,13 +87,28 @@ public class EntryPoint extends Activity {
     public static String decrypted_password;
     int RETRY_COUNT = 0;
     public static String password;
+    private ArrayList<String> permissions;
+    PermissionUtils permissionUtils;
+    private WeakReference<Context> weakReference;
+    public static final int TODO_DOWNLOAD_ACCOUNT = 100;
+    public static final int TODO_VERSION_CHECK = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        permissionUtils = new PermissionUtils(this);
+        EventBus.getDefault().register(this);
         macAddress = AppConfig.isDevelopment() ? AppConfig.getMacAddress() : GetMac.getMac(EntryPoint.this);
+        permissions = new ArrayList<String>(
+                Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE));
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         loginLayout = (LinearLayout) findViewById(R.id.loginLinearyLayout);
         loadingLayout = (LinearLayout) findViewById(R.id.loadingLayout);
 //        userMacAddressView = (TextView) findViewById(R.id.user_macaddress);
@@ -147,6 +176,11 @@ public class EntryPoint extends Activity {
         });
 
         deleteOlderFiles();
+
+    }
+
+    public void checkPermissionBeforeapkVerSionCheck(int request_code) {
+        permissionUtils.check_permission(permissions, getString(R.string.message_permissions), request_code);
 
 
     }
@@ -220,10 +254,10 @@ public class EntryPoint extends Activity {
         // try to login from file
         Logger.e(myFile.getName(), "exists");
 
-			/*
-             * if (!FileAuthentication.checkMountAndFile(macAddress))
-			 * FileAuthentication.setUserNameandId();
-			 */
+        /*
+         * if (!FileAuthentication.checkMountAndFile(macAddress))
+         * FileAuthentication.setUserNameandId();
+         */
 
         if (LoginFileUtils.readFromFile(AppConfig.isDevelopment() ? AppConfig.getMacAddress() : GetMac.getMac(EntryPoint.this))) {
             String encrypted_password = LoginFileUtils.getUserPassword() + "";
@@ -261,6 +295,13 @@ public class EntryPoint extends Activity {
 
     }
 
+    private WeakReference<Context> getWeaakReference() {
+        if (weakReference == null)
+            weakReference = new WeakReference<Context>(this);
+
+        return weakReference;
+    }
+
     public void apkVerSionCheck() {
         int version;
         try {
@@ -279,7 +320,7 @@ public class EntryPoint extends Activity {
                     @Override
                     public void onClick(View view) {
                         newVerSionAvailable.dismiss();
-                        new ApkDownloader(EntryPoint.this, getString(R.string.app_name)).execute(apk.getAppDownloadLink());
+                        new ApkDownloader(getWeaakReference(), getString(R.string.app_name)).execute(apk.getAppDownloadLink());
                     }
                 });
                 newVerSionAvailable.setNegativeButton(getString(R.string.btn_dismiss), new OnClickListener() {
@@ -335,6 +376,43 @@ public class EntryPoint extends Activity {
     }
 
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void PermissionGranted(int request_code) {
+        performOperations(request_code);
+    }
+
+    private void performOperations(int request_code) {
+        switch (request_code) {
+            case TODO_VERSION_CHECK:
+                apkVerSionCheck();
+                break;
+            case TODO_DOWNLOAD_ACCOUNT:
+                MarketAppDetailParser.openApk(this, MarketAppDetailParser.MyAccountAppPackage);
+        }
+    }
+
+    @Override
+    public void PartialPermissionGranted(int request_code, ArrayList<String> pending_permissions) {
+        permissionUtils.check_permission(pending_permissions, getString(R.string.message_permissions), request_code);
+    }
+
+    @Override
+    public void PermissionDenied(int request_code) {
+        finish();
+    }
+
+    @Override
+    public void NeverAskAgain(int request_code) {
+        performOperations(request_code);
+    }
+
+
     private class LoginTask extends AsyncTask<String, Void, String> {
         private String email, password;
 
@@ -372,7 +450,7 @@ public class EntryPoint extends Activity {
                         if (loginLayout.getVisibility() == View.GONE)
                             noInternet.exitApponBackPress();
                         else
-                        finish();
+                            finish();
                     }
                 });
                 noInternet.setPositiveButton("Re-Connect", new View.OnClickListener() {
@@ -380,7 +458,7 @@ public class EntryPoint extends Activity {
                     public void onClick(View view) {
                         Intent i = getBaseContext().getPackageManager()
                                 .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         noInternet.dismiss();
                         startActivity(i);
 
@@ -453,7 +531,7 @@ public class EntryPoint extends Activity {
                     try {
                         JSONObject value = new JSONObject(result);
                         JSONObject errorObj = value.getJSONObject("error");
-                       /* if (errorObj.getInt("is_active") == -4) {*/
+                        /* if (errorObj.getInt("is_active") == -4) {*/
                         final CustomDialogManager loginError = new CustomDialogManager(EntryPoint.this, "Login Error", errorObj.getString("error_code") + "\n" + errorObj.getString("message"), CustomDialogManager.ALERT);
                         loginError.build();
                         loginError.dismissDialogOnBackPressed();
@@ -502,6 +580,33 @@ public class EntryPoint extends Activity {
             }
 
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(VersionCheckEvent event) {
+       checkForAccountOrVersion();
+
+    }
+
+    private void checkForAccountOrVersion() {
+        if (PackageUtils.isPackageInstalled(EntryPoint.this, MarketAppDetailParser.MyAccountAppPackage)) {
+            String url = LinkConfig.LINK_SEVER_APKs + "?macAddress=" + macAddress
+                    + "&versionCode=" + BuildConfig.VERSION_CODE
+                    + "&versionName=" + BuildConfig.VERSION_NAME
+                    + "&packageName=" + BuildConfig.APPLICATION_ID;
+            Logger.d("CheckingMarketAppInfoUrl", url);
+            new ApkInServer(TODO_VERSION_CHECK,this).execute(url);
+        } else {
+            String url = LinkConfig.LINK_SEVER_APKs + "?macAddress=" + macAddress
+                    + "&packageName=" + MarketAppDetailParser.MyAccountAppPackage;
+            new ApkInServer(TODO_DOWNLOAD_ACCOUNT,this).execute(url);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     public void openSetting() {

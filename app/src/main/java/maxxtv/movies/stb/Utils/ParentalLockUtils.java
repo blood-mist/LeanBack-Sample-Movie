@@ -4,15 +4,11 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
-
 import io.realm.Realm;
 import io.realm.RealmQuery;
-import maxxtv.movies.stb.Async.ParentalLockCheck;
 import maxxtv.movies.stb.Entity.Movie;
 import maxxtv.movies.stb.MoviePlayCustomController;
-import maxxtv.movies.stb.R;
 import maxxtv.movies.stb.Utils.common.AppConfig;
-import maxxtv.movies.stb.Utils.common.LinkConfig;
 
 /**
  * Created by sadip_000 on 26/01/2016.

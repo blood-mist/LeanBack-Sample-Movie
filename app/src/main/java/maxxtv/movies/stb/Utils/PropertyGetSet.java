@@ -1,5 +1,6 @@
 package maxxtv.movies.stb.Utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -19,7 +20,7 @@ public class PropertyGetSet {
 
 		try {
 
-			Class SystemProperty = Class.forName("android.os.SystemProperties");
+			@SuppressLint("PrivateApi") Class SystemProperty = Class.forName("android.os.SystemProperties");
 
 			Class[] paramTypes = new Class[2];
 

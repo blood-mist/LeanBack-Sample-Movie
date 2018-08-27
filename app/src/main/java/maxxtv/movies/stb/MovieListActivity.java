@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -81,6 +82,7 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
         noTopMovie = (TextView) findViewById(R.id.topmovie_error);
         noCategory = (TextView) findViewById(R.id.category_error_text);
         subcategory_container = (LinearLayout) findViewById(R.id.movie_list_container);
+
         noMovies = (TextView) findViewById(R.id.movie_error);
         top_movies = (TextView) findViewById(R.id.top_movies);
         top_movielist = (RecyclerView) findViewById(R.id.top_movies_list);
@@ -409,6 +411,12 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
                 public void onClick(View view) {
                     noInternet.dismiss();
                     new SearchAsync(MovieListActivity.this, MovieListActivity.this, searchedMovie, authToken).execute(LinkConfig.getString(MovieListActivity.this, R.string.search_url));
+                }
+            });
+            noInternet.setNegativeButton("Settings", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    openSetting();
                 }
             });
             noInternet.show();

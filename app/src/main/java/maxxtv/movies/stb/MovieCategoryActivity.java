@@ -1,7 +1,9 @@
 package maxxtv.movies.stb;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +33,7 @@ import maxxtv.movies.stb.Entity.AddDataToFav;
 import maxxtv.movies.stb.Entity.Movie;
 import maxxtv.movies.stb.Entity.MovieCategoryParent;
 import maxxtv.movies.stb.Interface.SearchCallback;
+import maxxtv.movies.stb.Parser.MarketAppDetailParser;
 import maxxtv.movies.stb.Utils.CustomDialogManager;
 import maxxtv.movies.stb.Utils.DownloadUtil;
 import maxxtv.movies.stb.Utils.Logger;
@@ -291,7 +294,36 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
         });
 
     }
+    public void openSetting() {
+        try {
+            try {
 
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.rk_itvui.settings", "com.rk_itvui.settings.Settings"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception e) {
+                try {
+                    Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("com.giec.settings");
+                    startActivity(LaunchIntent);
+                    finish();
+                } catch (Exception c) {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings"));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+
+
+        } catch (Exception a) {
+            startActivity(
+                    new Intent(Settings.ACTION_SETTINGS));
+            finish();
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -318,6 +350,12 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
                 public void onClick(View view) {
                     noInternet.dismiss();
                     new SearchAsync(MovieCategoryActivity.this, MovieCategoryActivity.this, searched_movie, authToken).execute(LinkConfig.getString(MovieCategoryActivity.this, R.string.search_url));
+                }
+            });
+            noInternet.setNegativeButton("Settings", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    openSetting();
                 }
             });
             noInternet.show();

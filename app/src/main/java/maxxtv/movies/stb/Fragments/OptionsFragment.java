@@ -3,6 +3,7 @@ package maxxtv.movies.stb.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -77,7 +78,7 @@ public class OptionsFragment extends Fragment implements IsFavCallback{
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View optionView = inflater.inflate(R.layout.fragment_options, container, false);
@@ -182,39 +183,41 @@ public class OptionsFragment extends Fragment implements IsFavCallback{
             realm.commitTransaction();
             EventBus.getDefault().post(new AddDataToFav(movie.getMovie_id()));
 
-        }catch (Exception e){
+        }catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getActivity(), "Requested operation couldn't be completed.", Toast.LENGTH_SHORT).show();
-            try {
-                JSONObject root = new JSONObject(s);
-                if (root.getString("error_code").equals("405")) {
-                    LinkConfig.deleteAuthCodeFile();
-                    final CustomDialogManager invalidTokenDialog = new CustomDialogManager(getActivity(), CustomDialogManager.ALERT);
-                    invalidTokenDialog.build();
-                    invalidTokenDialog.setTitle("Invalid Token");
-                    invalidTokenDialog.setMessage("", root.getString("message")+",please re-login");
-                    invalidTokenDialog.getInnerObject().setCancelable(false);
-                    invalidTokenDialog.exitApponBackPress();
-                    invalidTokenDialog.setPositiveButton("OK", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent entryPointIntent = new Intent(getActivity(), EntryPoint.class);
-                            entryPointIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            invalidTokenDialog.dismiss();
-                            getActivity().startActivity(entryPointIntent);
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), "Requested operation couldn't be completed.", Toast.LENGTH_SHORT).show();
+                try {
+                    JSONObject root = new JSONObject(s);
+                    if (root.getString("error_code").equals("405")) {
+                        LinkConfig.deleteAuthCodeFile();
+                        final CustomDialogManager invalidTokenDialog = new CustomDialogManager(getActivity(), CustomDialogManager.ALERT);
+                        invalidTokenDialog.build();
+                        invalidTokenDialog.setTitle("Invalid Token");
+                        invalidTokenDialog.setMessage("", root.getString("message") + ",please re-login");
+                        invalidTokenDialog.getInnerObject().setCancelable(false);
+                        invalidTokenDialog.exitApponBackPress();
+                        invalidTokenDialog.setPositiveButton("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent entryPointIntent = new Intent(getActivity(), EntryPoint.class);
+                                entryPointIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                invalidTokenDialog.dismiss();
+                                getActivity().startActivity(entryPointIntent);
 
 
-                        }
-                    });
-                    invalidTokenDialog.show();
+                            }
+                        });
+                        invalidTokenDialog.show();
 
 
+                    }
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                    CustomDialogManager.ReUsedCustomDialogs.showDataNotFetchedAlert(getActivity());
                 }
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-                CustomDialogManager.ReUsedCustomDialogs.showDataNotFetchedAlert(getActivity());
-            }
 
+            }
         }
     }
 

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,23 +51,22 @@ public class DownloadUtil {
 			StringBuilder result = new StringBuilder();
 
 			try {
-                URL url = new URL(link);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				URL url = new URL(link);
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 				if (isTokenNeed)
 					connection.setRequestProperty("Authorization", "Bearer " + access_token);
-                connection.connect();
-				Log.d("response_code",connection.getResponseCode()+""+connection.getResponseMessage());
-                InputStream stream = connection.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+				connection.connect();
+				Log.d("response_code", connection.getResponseCode() + "" + connection.getResponseMessage());
+				InputStream stream = connection.getInputStream();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    result.append(line);
-                }
+				String line;
+				while ((line = reader.readLine()) != null) {
+					result.append(line);
+				}
 				Log.d("the json data is ", result.toString());
 				return result.toString();
-
-            } catch (Exception e) {
+			} catch (Exception e) {
                 e.printStackTrace();
 				return ServerUnrechable;
             }
