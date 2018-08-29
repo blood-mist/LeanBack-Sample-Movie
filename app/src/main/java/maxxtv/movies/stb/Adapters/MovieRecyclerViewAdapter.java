@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,9 +70,15 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                     } else if (keyCode == KeyEvent.KEYCODE_1) {
                         return tryMoveSelection(lm, -1);
                     } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-
+                        return tryMoveSelection(lm, 1);
                     } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
                         Toast.makeText(context, "Inside", Toast.LENGTH_SHORT).show();
+                    }else if(keyCode == KeyEvent.KEYCODE_DPAD_UP){
+                        return tryMoveSelection(lm, -1);
+                    }else if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
+                        return tryMoveSelection(lm, View.FOCUS_RIGHT);
+                    }else if(keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
+                        return tryMoveSelection(lm, View.FOCUS_LEFT);
                     }
 
                 }
@@ -99,6 +106,8 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
     }
 
 
+
+
     public MovieRecyclerViewAdapter(Context context, ArrayList<Movie> movieList, RecyclerView listHorizontal) {
         this.context = context;
         this.movieList = movieList;
@@ -109,7 +118,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item_layout, null);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item_layout, parent,false);
         return new ViewHolder(v);
     }
 
@@ -158,9 +167,10 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
         */
         private FrameLayout itemlayout;
         private View borderView;
-        private TextView title, refTitle;
+        private TextView title, refTitle,showMoreTitle;
         private ImageView imageItems, plusImage,favImage;
-        private LinearLayout showMore, movieItem;
+        private LinearLayout  movieItem;
+        private LinearLayout showMore;
 
 
         ViewHolder(final View itemView) {
@@ -171,6 +181,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
             showMore = (LinearLayout) itemView.findViewById(R.id.show_more);
             movieItem = (LinearLayout) itemView.findViewById(R.id.movie_item);
             favImage= (ImageView) itemView.findViewById(R.id.fav_image);
+            showMoreTitle = itemView.findViewById(R.id.showmoretitle);
 
             imageItems = (ImageView) itemView.findViewById(R.id.appimage);
 
@@ -190,9 +201,10 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                             plusImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.more));
                             showMore.setScaleX(1.06f);
                             showMore.setScaleY(1.03f);
+                            showMoreTitle.setBackground(ContextCompat.getDrawable(context, R.drawable.main_gradient));
 
                         } else {
-                            ViewCompat.setElevation(itemView, 1);
+                            ViewCompat.setElevation(itemView, 10);
                             movieItem.setScaleX(1.06f);
                             movieItem.setScaleY(1.03f);
                             title.setBackground(ContextCompat.getDrawable(context, R.drawable.main_gradient));
@@ -204,6 +216,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                             plusImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.plus_corrected));
                             showMore.setScaleX(1.0f);
                             showMore.setScaleY(1.0f);
+                            showMoreTitle.setBackground(ContextCompat.getDrawable(context, R.color.item_unselectedd));
                         } else {
                             ViewCompat.setElevation(itemView, 0);
                             movieItem.setScaleX(1.0f);

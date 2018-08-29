@@ -159,6 +159,7 @@ public class ApkDownloader extends AsyncTask<String, Integer, File> {
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mProgressDialog.setCancelable(false);
 
+
         PowerManager pm = (PowerManager) getContext()
                 .getSystemService(Context.POWER_SERVICE);
         assert pm != null;

@@ -124,6 +124,10 @@ public class SubCatFragment extends Fragment {
         if(subCatMoveList.size()>0 && mParam1){
             subCatGrid.requestFocus();
         }
+
+
+
+
        /* subCatGrid.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -150,6 +154,8 @@ public class SubCatFragment extends Fragment {
 
 
     }
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

@@ -343,6 +343,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                     LinkConfig.MOVIE_PLAY_LINK) + "?movieId=" + movieId;
             new MovieLinkLoader(context, movieId, flag_to_end_activity, authToken)
                     .execute(media_url);
+            //show progressbar
         } else {
 
             Logger.d("movie parental locked", "do not let let play channel");
@@ -1311,47 +1312,58 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                     CustomDialogManager.LOADING);
             loading_dialog.build();
             loading_dialog.show();
+            loading_dialog.getInnerObject().setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    cancel(true);
+                    onBackPressed();
+
+                }
+            });
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+            if(isCancelled()) {
+                MoviePlayCustomController.this.finish();
+            }
+            else{
+                if (loading_dialog.isShowing())
+                    loading_dialog.hide();
+                if (result.equalsIgnoreCase(DownloadUtil.NotOnline) || result.equalsIgnoreCase(DownloadUtil.ServerUnrechable)) {
+                    final CustomDialogManager noInternet = new CustomDialogManager(context, CustomDialogManager.ALERT);
+                    noInternet.build();
+                    noInternet.setTitle(getString(R.string.connection_failed));
+                    noInternet.setMessage("", getString(R.string.no_internet_body));
+                    noInternet.getInnerObject().setCancelable(false);
+                    noInternet.finishActivityonDismissPressed(MoviePlayCustomController.this);
+                    noInternet.finishActivityOnBackPressed(MoviePlayCustomController.this);
+                    noInternet.setPositiveButton(context.getString(R.string.btn_dismiss), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            noInternet.dismiss();
+                            ((Activity) context).finish();
+                        }
+                    });
 
-            if (loading_dialog.isShowing())
-                loading_dialog.dismiss();
-            if (result.equalsIgnoreCase(DownloadUtil.NotOnline) || result.equalsIgnoreCase(DownloadUtil.ServerUnrechable)) {
-                final CustomDialogManager noInternet = new CustomDialogManager(context, CustomDialogManager.ALERT);
-                noInternet.build();
-                noInternet.setTitle(getString(R.string.connection_failed));
-                noInternet.setMessage("", getString(R.string.no_internet_body));
-                noInternet.getInnerObject().setCancelable(false);
-                noInternet.finishActivityonDismissPressed(MoviePlayCustomController.this);
-                noInternet.finishActivityOnBackPressed(MoviePlayCustomController.this);
-                noInternet.setPositiveButton(context.getString(R.string.btn_dismiss), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        noInternet.dismiss();
-                        ((Activity) context).finish();
-                    }
-                });
+                    noInternet.setNegativeButton("Settings", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            openSetting();
+                            noInternet.dismiss();
 
-                noInternet.setNegativeButton("Settings", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openSetting();
-                        noInternet.dismiss();
+                        }
+                    });
+                    noInternet.show();
 
-                    }
-                });
-                noInternet.show();
+                } else {
 
-            } else {
-
-                try {
-                    JSONObject root = new JSONObject(result);
-                    JSONObject movieObj = root.getJSONObject("movies");
-                    tvUrl = movieObj.getString("link");
-                    serverType = movieObj.getString("servertype");
+                    try {
+                        JSONObject root = new JSONObject(result);
+                        JSONObject movieObj = root.getJSONObject("movies");
+                        tvUrl = movieObj.getString("link");
+                        serverType = movieObj.getString("servertype");
                   /*  if (serverType.equals("1")) {
                         // Decryption DOne here
                         Mcrypt mCrypt = new Mcrypt();
@@ -1364,105 +1376,107 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                         }
 
                     }*/
-                    if (serverType.equals("6")) {
-                        flag_to_close_activity = true;
+                        if (serverType.equals("6")) {
+                            flag_to_close_activity = true;
 
-                        String YT_KEY = LinkConfig.YOUTUBE_API_KEY;
-                        Uri uri = Uri.parse(data1);
-                        String videoId = uri.getQueryParameter("v");
-                        Logger.d("YouTube videoId", videoId);
-                        if (PackageUtils.isPackageInstalled(context, MarketAppDetailParser.Youtube)) {
-                            if (YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(context).equals(YouTubeInitializationResult.SUCCESS)) {
-                                Intent videoIntent = YouTubeStandalonePlayer
-                                        .createVideoIntent((Activity) context, YT_KEY,
-                                                videoId, 0, true, false);
-                                if (flag_to_close_activity) {
-                                    videoIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            String YT_KEY = LinkConfig.YOUTUBE_API_KEY;
+                            Uri uri = Uri.parse(data1);
+                            String videoId = uri.getQueryParameter("v");
+                            Logger.d("YouTube videoId", videoId);
+                            if (PackageUtils.isPackageInstalled(context, MarketAppDetailParser.Youtube)) {
+                                if (YouTubeApiServiceUtil.isYouTubeApiServiceAvailable(context).equals(YouTubeInitializationResult.SUCCESS)) {
+                                    Intent videoIntent = YouTubeStandalonePlayer
+                                            .createVideoIntent((Activity) context, YT_KEY,
+                                                    videoId, 0, true, false);
+                                    if (flag_to_close_activity) {
+                                        videoIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    }
+                                    ((Activity) context).startActivityForResult(videoIntent, 1001
+                                            /*STANDALONE_PLAYER_REQUEST_CODE*/);
+                                } else {
+                                    Toast.makeText(context, "Player is not supported in this device", Toast.LENGTH_LONG).show();
+                                    finish();
                                 }
-                                ((Activity) context).startActivityForResult(videoIntent, 1001
-                                        /*STANDALONE_PLAYER_REQUEST_CODE*/);
+
                             } else {
-                                Toast.makeText(context, "Player is not supported in this device", Toast.LENGTH_LONG).show();
-                                finish();
+                                checkIfLatestYoutubeInstalled();
                             }
+
 
                         } else {
-                            checkIfLatestYoutubeInstalled();
+
+                            data1 = tvUrl;
+                            playMovie(context, currentMovieId, data1);
                         }
 
-
-                    } else {
-
-                        data1 = tvUrl;
-                        playMovie(context, currentMovieId, data1);
-                    }
-
-                } catch (JSONException je) {
-                    Logger.printStackTrace(je);
-                    String errorCode, errorMessage;
-                    Logger.d(TAG + "error json", result);
-                    try {
-                        JSONObject Jobj = new JSONObject(result);
-                        errorCode = Jobj.getString("error_code");
-                        errorMessage = Jobj.getString("error_message");
-
-                        final CustomDialogManager movieLoadError = new CustomDialogManager(
-                                context, CustomDialogManager.ALERT);
-                        movieLoadError.build();
-                        movieLoadError.setMessage(errorCode, errorMessage);
-
-
-                        movieLoadError.getInnerObject().setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                ((Activity) context).finish();
-                            }
-                        });
-
-                        if (context
-                                .getClass()
-                                .getName()
-                                .equals(MoviePlayCustomController.class.getName())) {
-                            movieLoadError.finishActivityOnBackPressed(context);
-                            movieLoadError.finishActivityonDismissPressed(context);
-
-                        }
-                        Logger.d(TAG + MovieLinkLoader.class.getSimpleName() + "error json", "parsing success");
-                        movieLoadError.show();
-                    } catch (JSONException je2) {
-                        Logger.printStackTrace(je2);
+                    } catch (JSONException je) {
+                        Logger.printStackTrace(je);
+                        String errorCode, errorMessage;
+                        Logger.d(TAG + "error json", result);
                         try {
-                            JSONObject root = new JSONObject(result);
-                            if (root.getString("error_code").equals("405")) {
-                                LinkConfig.deleteAuthCodeFile();
-                                final CustomDialogManager invalidTokenDialog = new CustomDialogManager(context, CustomDialogManager.ALERT);
-                                invalidTokenDialog.build();
-                                invalidTokenDialog.setTitle("Invalid Token");
-                                invalidTokenDialog.setMessage("", root.getString("message") + ",please re-login");
-                                invalidTokenDialog.getInnerObject().setCancelable(false);
-                                invalidTokenDialog.exitApponBackPress();
-                                invalidTokenDialog.setPositiveButton("OK", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Intent entryPointIntent = new Intent(context, EntryPoint.class);
-                                        entryPointIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        invalidTokenDialog.dismiss();
-                                        context.startActivity(entryPointIntent);
+                            JSONObject Jobj = new JSONObject(result);
+                            errorCode = Jobj.getString("error_code");
+                            errorMessage = Jobj.getString("error_message");
+
+                            final CustomDialogManager movieLoadError = new CustomDialogManager(
+                                    context, CustomDialogManager.ALERT);
+                            movieLoadError.build();
+                            movieLoadError.setMessage(errorCode, errorMessage);
 
 
-                                    }
-                                });
-                                invalidTokenDialog.show();
+                            movieLoadError.getInnerObject().setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    ((Activity) context).finish();
+                                }
+                            });
 
+                            if (context
+                                    .getClass()
+                                    .getName()
+                                    .equals(MoviePlayCustomController.class.getName())) {
+                                movieLoadError.finishActivityOnBackPressed(context);
+                                movieLoadError.finishActivityonDismissPressed(context);
 
                             }
-                        } catch (JSONException e1) {
-                            e1.printStackTrace();
-                            CustomDialogManager.ReUsedCustomDialogs.showDataNotFetchedAlert(context);
+                            Logger.d(TAG + MovieLinkLoader.class.getSimpleName() + "error json", "parsing success");
+                            movieLoadError.show();
+                        } catch (JSONException je2) {
+                            Logger.printStackTrace(je2);
+                            try {
+                                JSONObject root = new JSONObject(result);
+                                if (root.getString("error_code").equals("405")) {
+                                    LinkConfig.deleteAuthCodeFile();
+                                    final CustomDialogManager invalidTokenDialog = new CustomDialogManager(context, CustomDialogManager.ALERT);
+                                    invalidTokenDialog.build();
+                                    invalidTokenDialog.setTitle("Invalid Token");
+                                    invalidTokenDialog.setMessage("", root.getString("message") + ",please re-login");
+                                    invalidTokenDialog.getInnerObject().setCancelable(false);
+                                    invalidTokenDialog.exitApponBackPress();
+                                    invalidTokenDialog.setPositiveButton("OK", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent entryPointIntent = new Intent(context, EntryPoint.class);
+                                            entryPointIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            invalidTokenDialog.dismiss();
+                                            context.startActivity(entryPointIntent);
+
+
+                                        }
+                                    });
+                                    invalidTokenDialog.show();
+
+
+                                }
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                                CustomDialogManager.ReUsedCustomDialogs.showDataNotFetchedAlert(context);
+                            }
+
                         }
 
-                    }
 
+                    }
 
                 }
 

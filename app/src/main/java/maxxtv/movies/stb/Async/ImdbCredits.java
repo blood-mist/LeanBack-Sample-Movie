@@ -34,6 +34,7 @@ public class ImdbCredits extends AsyncTask<String,String,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        if(!isCancelled())
         callback.getImdbData(imdbpojo,s);
     }
 }

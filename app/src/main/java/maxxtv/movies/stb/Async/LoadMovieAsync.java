@@ -53,6 +53,7 @@ public class LoadMovieAsync extends AsyncTask<String,String,String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         Log.d("parent_click", s);
+        if(!isCancelled())
         callback.getResults(s);
     }
 }

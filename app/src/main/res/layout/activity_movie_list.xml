@@ -113,10 +113,14 @@
                     android:layout_height="50dp"
                     android:scrollbars="none" />
 
-                <LinearLayout
+                <FrameLayout
                     android:id="@+id/movie_list_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:nextFocusRight="@id/movie_list_container"
+                    android:nextFocusLeft="@id/movie_list_container"
+                    android:nextFocusForward="@id/movie_list_container"
+
                     android:orientation="vertical" />
 
                 <TextView

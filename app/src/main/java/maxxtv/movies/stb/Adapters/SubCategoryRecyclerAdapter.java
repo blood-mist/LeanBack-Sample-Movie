@@ -20,10 +20,15 @@ import maxxtv.movies.stb.R;
 public class SubCategoryRecyclerAdapter extends RecyclerView.Adapter<SubCategoryRecyclerAdapter.ViewHolder> {
     private Context context;
     private ArrayList<SubCategoryName> subcategoryList;
-    private int focusedItem = 0;
+    private int focusedItem = -1;
     private RecyclerView listHozizontal;
     private boolean flag;
     private int selected_item1 = -1;
+
+    public void setSelected_item2(int selected_item2) {
+        this.selected_item2 = selected_item2;
+    }
+
     private int selected_item2 = -1;
 
     public SubCategoryRecyclerAdapter(Context context, ArrayList<SubCategoryName> subcategoryList, RecyclerView listHorizontal) {
@@ -45,6 +50,14 @@ public class SubCategoryRecyclerAdapter extends RecyclerView.Adapter<SubCategory
         SubCategoryName itemName = subcategoryList.get(position);
         selected_item1 = 0;
 
+        if(position == 0){
+            holder.title.setNextFocusLeftId(holder.title.getId());
+        }
+
+        if(position == subcategoryList.size()-1){
+            holder.title.setNextFocusRightId(holder.title.getId());
+        }
+
         if (flag) {
             if (selected_item1 == position) {
                 holder.title.setSelected(true);
@@ -57,10 +70,16 @@ public class SubCategoryRecyclerAdapter extends RecyclerView.Adapter<SubCategory
                 holder.title.setSelected(false);
             }
         }
+
+        if(focusedItem == position){
+            holder.title.requestFocus();
+        }
 //        holder.reflectingText.setImageBitmap(reflectImage(context, itemImage.getId()));
         holder.title.setText(itemName.getSubCategory());
 
     }
+
+
 
 
     @Override
@@ -107,37 +126,32 @@ public class SubCategoryRecyclerAdapter extends RecyclerView.Adapter<SubCategory
             title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    view.requestFocus();
                     int pos = getAdapterPosition();
-
-                    if (selected_item1 == pos) {
-                        SubCategoryName clickedName = subcategoryList.get(pos);
-                        if (clickedName.getMovie_details().length() > 0) {
-                            SubCatFragment subMovies = SubCatFragment.newInstance(true, clickedName.getMovie_details());
-                            ((MovieListActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.movie_list_container, subMovies).commit();
-                        } else {
-                            ((MovieListActivity) context).hideFragment();
-                            title.requestFocus();
-
-
-                        }
+                    if (selected_item2 == pos) {
 
                     } else {
                         SubCategoryName clickedName = subcategoryList.get(pos);
                         if (clickedName.getMovie_details().length() > 0) {
                             SubCatFragment subMovies = SubCatFragment.newInstance(true, clickedName.getMovie_details());
                             ((MovieListActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.movie_list_container, subMovies).commit();
+                            focusedItem = -1;
                         } else {
                             ((MovieListActivity) context).hideFragment();
-                            title.requestFocus();
+                            view.requestFocus();
+                            focusedItem = pos;
                         }
 
+                        selected_item2 = pos;
+                        notifyDataSetChanged();
+
                     }
+
                    /* SubCategoryName clickedName = subcategoryList.get(pos);
                     SubCatFragment subMovies = SubCatFragment.newInstance("hello", clickedName.getMovie_details());
                     ((MovieListActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.movie_list_container, subMovies).commit();
 */
-                    selected_item2 = pos;
-                    notifyDataSetChanged();
+
                 }
             });
 

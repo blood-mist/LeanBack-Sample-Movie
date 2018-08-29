@@ -4,17 +4,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:gravity="center"
-    >
-<FrameLayout
+    android:gravity="center">
+<maxxtv.movies.stb.Utils.FocusFixFrameLayout
     android:layout_width="150dp"
     android:layout_height="225dp"
     android:id="@+id/movie_item_layout"
     android:background="@drawable/movie_grid_selector"
     android:clickable="true"
     android:focusable="true"
-    android:focusableInTouchMode="true"
-    >
+    android:descendantFocusability="blocksDescendants"
+    android:focusableInTouchMode="true">
         <LinearLayout
             android:id="@+id/movie_item"
             android:padding="5dp"
@@ -44,50 +43,94 @@
                     android:src="@drawable/hover_fav"
                     android:layout_gravity="right"/>
             </FrameLayout>
-
-
-
-
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="match_parent"
                 android:background="@drawable/movie_text_selector"
                 android:gravity="center"
                 android:padding="2dp"
                 android:layout_gravity="center"
-                android:text="MOVIES"
-                android:minLines="2"
+                android:text="MOVIES nnnnmnmnnbmnbmnbmnb"
                 android:maxLines="2"
+                android:textSize="13sp"
                 android:textAllCaps="true"
                 android:textColor="#ffffff"
                 android:textStyle="bold" />
         </LinearLayout>
-        <LinearLayout
-            android:id="@+id/show_more"
-            android:layout_width="140dp"
-            android:layout_height="215dp"
-            android:orientation="horizontal"
-            android:background="#2a2a2a"
-            android:padding="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:visibility="gone">
+    <LinearLayout
+        android:id="@+id/show_more"
+        android:padding="5dp"
+        android:background="#2a2a2a"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="175dp"
+            android:layout_gravity="center">
             <ImageView
                 android:id="@+id/more_image"
-                android:focusable="false"
                 android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_height="175dp"
                 android:padding="2dp"
-                android:scaleType="fitXY"
-                android:layout_gravity="center"
-                android:src="@drawable/plus_corrected"/>
+                android:src="@drawable/plus_corrected"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"/>
 
-        </LinearLayout>
+        </FrameLayout>
+        <TextView
+            android:id="@+id/showmoretitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/movie_text_selector"
+            android:gravity="center"
+            android:padding="2dp"
+            android:layout_gravity="center"
+            android:text="Load More"
+            android:maxLines="2"
+            android:textSize="13sp"
+            android:textAllCaps="true"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+    </LinearLayout>
+        <!--<RelativeLayout-->
+            <!--android:id="@+id/show_more"-->
+            <!--android:layout_width="140dp"-->
+            <!--android:layout_height="215dp"-->
+            <!--android:orientation="vertical"-->
+            <!--android:background="#2a2a2a"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:visibility="visible">-->
+            <!--<ImageView-->
+                <!--android:id="@+id/more_image"-->
+                <!--android:focusable="false"-->
+                <!--android:layout_width="80dp"-->
+                <!--android:layout_height="150dp"-->
+                <!--android:padding="2dp"-->
+                <!--android:layout_centerInParent="true"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:src="@drawable/plus_corrected"/>-->
+            <!--<TextView-->
+                <!--android:layout_below="@id/more_image"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@drawable/movie_text_selector"-->
+                <!--android:gravity="center"-->
+                <!--android:padding="2dp"-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:text="LOAD MORE "-->
+                <!--android:maxLines="2"-->
+                <!--android:textSize="13sp"-->
+                <!--android:textAllCaps="true"-->
+                <!--android:textColor="#ffffff"-->
+                <!--android:textStyle="bold" />-->
 
-    </FrameLayout>
 
+        <!--</RelativeLayout>-->
+    </maxxtv.movies.stb.Utils.FocusFixFrameLayout>
 <!--</FrameLayout>-->
-
-
 </LinearLayout>

@@ -48,7 +48,7 @@ import maxxtv.movies.stb.Utils.common.LinkConfig;
 public class MovieListActivity extends AppCompatActivity implements AsyncBack, SubCatFragment.OnFragmentInteractionListener, SearchCallback {
     private TextView top_movies, noMovies, noCategory, noTopMovie;
     private RecyclerView top_movielist, subcategory_list;
-    private LinearLayout subcategory_container, subcategorylayout, contentlayout;
+    private LinearLayout  subcategorylayout, contentlayout;
     private FrameLayout loadingLayout;
     private LoadMovieAsync loadMovies;
     private SearchView movieSearchView;
@@ -59,6 +59,7 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
     private String searchedMovie;
     private String authToken;
     private boolean hasTopMovie = false;
+    private FrameLayout subcategory_container;
 
 
     @Override
@@ -75,21 +76,43 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
         loadMovies.execute(LinkConfig.getString(this, LinkConfig.MOVIE_CATEGORY_DETAIL) + "?parentId=" + getIntent().getIntExtra("parent_id", 0));
     }
 
+
+
     private void findViews() {
         contentlayout = (LinearLayout) findViewById(R.id.content_layout);
         loadingLayout = (FrameLayout) findViewById(R.id.progressBarLayout);
         subcategorylayout = (LinearLayout) findViewById(R.id.subcategory_layout);
         noTopMovie = (TextView) findViewById(R.id.topmovie_error);
         noCategory = (TextView) findViewById(R.id.category_error_text);
-        subcategory_container = (LinearLayout) findViewById(R.id.movie_list_container);
+        subcategory_container = (FrameLayout) findViewById(R.id.movie_list_container);
+
 
         noMovies = (TextView) findViewById(R.id.movie_error);
         top_movies = (TextView) findViewById(R.id.top_movies);
         top_movielist = (RecyclerView) findViewById(R.id.top_movies_list);
         subcategory_list = (RecyclerView) findViewById(R.id.subcategory_list);
+        subcategory_list.setNextFocusLeftId(subcategory_list.getId());
+        subcategory_list.setNextFocusRightId(subcategory_list.getId());
+
         searchBtn = (Button) findViewById(R.id.btn_search_sub);
         search_text = (EditText) findViewById(R.id.search_text_sub);
-       search_text.setOnKeyListener(new View.OnKeyListener() {
+        search_text.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                boolean handled = false;
+                if (search_text.getText().toString().trim().equals("".trim())) {
+                    Toast.makeText(MovieListActivity.this, "Please enter text to search", Toast.LENGTH_SHORT).show();
+                    search_text.requestFocus();
+                } else {
+                    handled = true;
+                    searchedMovie = search_text.getText().toString();
+                    new SearchAsync(MovieListActivity.this, MovieListActivity.this, searchedMovie, authToken)
+                            .execute(LinkConfig.getString(MovieListActivity.this, R.string.search_url));
+                }
+                return handled;
+            }
+        });
+        search_text.setOnKeyListener(new View.OnKeyListener() {
            @Override
            public boolean onKey(View view, int i, KeyEvent keyEvent) {
                if (i == KeyEvent.KEYCODE_ENTER) {
@@ -141,7 +164,17 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
 
     @Override
     public void onBackPressed() {
+        if(loadMovies != null ){
+            loadMovies.cancel(true);
+        }
         super.onBackPressed();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 
     @Override
@@ -361,14 +394,15 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
         subcategory_list.setLayoutManager(new LinearLayoutManager(MovieListActivity.this, LinearLayoutManager.HORIZONTAL, false));
         subcategory_list.setAdapter(subcatAdapter);
 
+
         SubCategoryName clickedName = subcategoryList.get(0);
         if (clickedName.getMovie_details().length() == 0) {
             if (hasTopMovie)
                 top_movielist.requestFocus();
-
             noMovies.setVisibility(View.VISIBLE);
             subcategory_container.setVisibility(View.GONE);
         } else {
+            subcatAdapter.setSelected_item2(0);
             SubCatFragment subMovies = SubCatFragment.newInstance(false, clickedName.getMovie_details());
             getSupportFragmentManager().beginTransaction().replace(R.id.movie_list_container, subMovies).commit();
         }
@@ -425,7 +459,7 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
                 final CustomDialogManager manager = new CustomDialogManager(MovieListActivity.this, CustomDialogManager.MESSAGE);
                 manager.build();
                 manager.setTitle("Movie Not Found");
-                manager.setMessage("Movie Not Found ", " Please check the spelling and try again.");
+                manager.setMessage("Movie Not Found ", " Requested movie couldn\'t be found.");
                 manager.addDissmissButtonToDialog();
                 manager.dismissDialogOnBackPressed();
                 manager.setExtraButton("", new View.OnClickListener() {
@@ -476,7 +510,7 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
                     final CustomDialogManager manager = new CustomDialogManager(MovieListActivity.this, CustomDialogManager.MESSAGE);
                     manager.build();
                     manager.setTitle("Movie Not Found");
-                    manager.setMessage("Movie Not Found ", " Please check the spelling and try again.");
+                    manager.setMessage("Movie Not Found ", " Requested movie couldn\'t be found.");
                     manager.addDissmissButtonToDialog();
                     manager.dismissDialogOnBackPressed();
                     manager.setExtraButton("", new View.OnClickListener() {
@@ -507,13 +541,9 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
                                 entryPointIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 invalidTokenDialog.dismiss();
                                 MovieListActivity.this.startActivity(entryPointIntent);
-
-
                             }
                         });
                         invalidTokenDialog.show();
-
-
                     }
                 } catch (JSONException e1) {
                     e1.printStackTrace();
@@ -538,7 +568,6 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
         super.onUserInteraction();
         Logger.d("onUserInteraction", "User status changed");
         getApp().active();
-
     }
 
     public void hideFragment() {
@@ -555,5 +584,19 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
     public void removeErrorMessage() {
         noMovies.setVisibility(View.GONE);
         subcategory_container.setVisibility(View.VISIBLE);
+    }
+
+    private long mLastKeyDownTime = 0;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        long current = System. currentTimeMillis();
+        boolean res = false;
+        if (current - mLastKeyDownTime < 300 ) {
+            res = true;
+        } else {
+            res = super.onKeyDown(keyCode, event);
+            mLastKeyDownTime = current;
+        }
+        return res;
     }
 }

@@ -246,7 +246,7 @@ public class CustomDialogManager {
                                  KeyEvent event) {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_BACK:
-                        d.dismiss();
+                         d.dismiss();
                         ((Activity) context).finish();
                         return true;
 

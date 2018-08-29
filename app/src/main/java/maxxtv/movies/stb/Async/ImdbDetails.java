@@ -31,6 +31,7 @@ public class ImdbDetails extends AsyncTask<String,String,String>{
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         Logger.d("imdb_result",s);
+        if(!isCancelled())
         callback.getResults(s);
     }
 }

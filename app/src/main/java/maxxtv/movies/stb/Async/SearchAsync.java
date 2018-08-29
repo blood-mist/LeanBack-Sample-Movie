@@ -1,6 +1,8 @@
 package maxxtv.movies.stb.Async;
 
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -33,6 +35,7 @@ public class SearchAsync extends AsyncTask<String,String,String> {
         this.movieName=movieName;
         this.authToken=authToken;
         this.loading=new CustomDialogManager(context,CustomDialogManager.LOADING);
+
     }
 
     @Override
@@ -40,10 +43,23 @@ public class SearchAsync extends AsyncTask<String,String,String> {
         super.onPreExecute();
         loading.build();
         loading.show();
+        loading.getInnerObject().setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                cancel(true);
+            }
+        });
+
+
+            // do your work here
+
     }
 
     @Override
     protected String doInBackground(String... strings) {
+
+
+
         DownloadUtil getUtc = new DownloadUtil(LinkConfig.getString(context, LinkConfig.GET_UTC), context);
         JSONObject utcObj = null;
         String utc = "";
@@ -58,15 +74,19 @@ public class SearchAsync extends AsyncTask<String,String,String> {
             String subCategory_url = strings[0] + "?" + LinkConfig.getHashCode(utc)+"&movieName="+movieName;
             Log.d("subCategory_url", subCategory_url);
             DownloadUtil dUtil = new DownloadUtil(subCategory_url, context,authToken);
+
             return dUtil.downloadStringContent();
+
         } else
+
             return utc;
     }
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        loading.dismiss();
+        if(!isCancelled()&&s != null)
         asyncback.getSearchMovies(s);
+        loading.dismiss();
     }
 }

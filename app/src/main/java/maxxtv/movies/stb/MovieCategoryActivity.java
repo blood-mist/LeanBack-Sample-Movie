@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import io.fabric.sdk.android.services.concurrency.AsyncTask;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import maxxtv.movies.stb.Adapters.CategoryRecyclerViewAdapter;
@@ -50,6 +53,7 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
     private MovieRecyclerViewAdapter playlist_adapter;
     private String searched_movie;
     private String authToken;
+    private SearchAsync searchAsync = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,9 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(searchAsync != null){
+            searchAsync.cancel(true);
+        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -194,8 +201,11 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        this.finish();
+
+        if(searchAsync != null&&searchAsync.getStatus() == android.os.AsyncTask.Status.RUNNING){
+            searchAsync.cancel(true);
+        }else
+            super.onBackPressed();
     }
 
     private void addItemtoTopList() {
@@ -279,6 +289,24 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
         noFavMovie = (TextView) findViewById(R.id.no_favMovies);
         search_text = (EditText) findViewById(R.id.search_text);
         searchBtn = (Button) findViewById(R.id.btn_search);
+        search_text.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                boolean handled = false;
+                if (i == EditorInfo.IME_ACTION_SEARCH) {
+                    handled = true;
+                    //Perform your Actions here.
+                    if (search_text.getText().toString().trim().equals("".trim())) {
+                        Toast.makeText(MovieCategoryActivity.this, "Please enter text to search", Toast.LENGTH_SHORT).show();
+                        search_text.requestFocus();
+                    } else {
+                        loadSearchAsyn();
+                    }
+
+                }
+                return handled;
+            }
+        });
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -286,14 +314,26 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
                     Toast.makeText(MovieCategoryActivity.this, "Please enter text to search", Toast.LENGTH_SHORT).show();
                     search_text.requestFocus();
                 } else {
-                    searched_movie = search_text.getText().toString();
-                    new SearchAsync(MovieCategoryActivity.this, MovieCategoryActivity.this, searched_movie, authToken)
-                            .execute(LinkConfig.getString(MovieCategoryActivity.this, R.string.search_url));
+                   loadSearchAsyn();
                 }
             }
+
         });
 
     }
+
+    private void loadSearchAsyn() {
+        searched_movie = search_text.getText().toString();
+        if(searchAsync != null && searchAsync.getStatus() == android.os.AsyncTask.Status.RUNNING)
+        {
+            searchAsync.cancel(true);
+        }
+        searchAsync = new SearchAsync(MovieCategoryActivity.this, MovieCategoryActivity.this, searched_movie, authToken);
+        searchAsync.execute(LinkConfig.getString(MovieCategoryActivity.this, R.string.search_url));
+    }
+
+
+
     public void openSetting() {
         try {
             try {
@@ -349,7 +389,7 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
                 @Override
                 public void onClick(View view) {
                     noInternet.dismiss();
-                    new SearchAsync(MovieCategoryActivity.this, MovieCategoryActivity.this, searched_movie, authToken).execute(LinkConfig.getString(MovieCategoryActivity.this, R.string.search_url));
+                    loadSearchAsyn();
                 }
             });
             noInternet.setNegativeButton("Settings", new View.OnClickListener() {
@@ -364,7 +404,7 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
                 final CustomDialogManager manager = new CustomDialogManager(MovieCategoryActivity.this, CustomDialogManager.MESSAGE);
                 manager.build();
                 manager.setTitle("Movie Not Found");
-                manager.setMessage("Movie Not Found ", " Please check the spelling and try again.");
+                manager.setMessage("Movie Not Found ", "Requested movie couldn\'t be found.");
                 manager.addDissmissButtonToDialog();
                 manager.dismissDialogOnBackPressed();
                 manager.setExtraButton("", new View.OnClickListener() {
@@ -386,7 +426,7 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
                     manager.build();
                     manager.setTitle("Movie Not Found");
                     manager.dismissDialogOnBackPressed();
-                    manager.setMessage("Movie Not Found ", " Please check the spelling and try again.");
+                    manager.setMessage("Movie Not Found ", " Requested movie couldn\'t be found.");
                     manager.addDissmissButtonToDialog();
                     manager.setExtraButton("", new View.OnClickListener() {
                         @Override

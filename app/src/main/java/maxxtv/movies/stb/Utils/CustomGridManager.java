@@ -5,6 +5,7 @@ package maxxtv.movies.stb.Utils;
  */
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
@@ -15,7 +16,7 @@ import android.view.View;
  *
  * @see <a href="http://stackoverflow.com/questions/31596801/recyclerview-focus-scrolling">http://stackoverflow.com/questions/31596801/recyclerview-focus-scrolling</a>
  */
-public class CustomGridManager extends android.support.v7.widget.GridLayoutManager {
+public class CustomGridManager extends GridLayoutManager {
 
     public CustomGridManager(Context context, AttributeSet attrs, int defStyleAttr,
                              int defStyleRes) {
@@ -120,4 +121,6 @@ public class CustomGridManager extends android.support.v7.widget.GridLayoutManag
             return newPos < 0 && newPos >= spanCount;
         }
     }
+
+
 }
