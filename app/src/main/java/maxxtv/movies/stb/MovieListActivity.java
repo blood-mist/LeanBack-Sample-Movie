@@ -43,6 +43,7 @@ import maxxtv.movies.stb.Utils.CustomDialogManager;
 import maxxtv.movies.stb.Utils.DownloadUtil;
 import maxxtv.movies.stb.Utils.Logger;
 import maxxtv.movies.stb.Utils.LoginFileUtils;
+import maxxtv.movies.stb.Utils.common.DataUtils;
 import maxxtv.movies.stb.Utils.common.LinkConfig;
 
 public class MovieListActivity extends AppCompatActivity implements AsyncBack, SubCatFragment.OnFragmentInteractionListener, SearchCallback {
@@ -91,8 +92,8 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
         top_movies = (TextView) findViewById(R.id.top_movies);
         top_movielist = (RecyclerView) findViewById(R.id.top_movies_list);
         subcategory_list = (RecyclerView) findViewById(R.id.subcategory_list);
-        subcategory_list.setNextFocusLeftId(subcategory_list.getId());
-        subcategory_list.setNextFocusRightId(subcategory_list.getId());
+//        subcategory_list.setNextFocusLeftId(subcategory_list.getId());
+////        subcategory_list.setNextFocusRightId(subcategory_list.getId());
 
         searchBtn = (Button) findViewById(R.id.btn_search_sub);
         search_text = (EditText) findViewById(R.id.search_text_sub);
@@ -390,12 +391,13 @@ public class MovieListActivity extends AppCompatActivity implements AsyncBack, S
     }
 
     private void setUpAllAdapters(final ArrayList<SubCategoryName> subcategoryList) {
-        subcatAdapter = new SubCategoryRecyclerAdapter(this, subcategoryList, subcategory_list);
+        ArrayList<SubCategoryName> newSubCategoryList = DataUtils.getFilteredSubCatList(subcategoryList);
+        subcatAdapter = new SubCategoryRecyclerAdapter(this, newSubCategoryList, subcategory_list);
         subcategory_list.setLayoutManager(new LinearLayoutManager(MovieListActivity.this, LinearLayoutManager.HORIZONTAL, false));
         subcategory_list.setAdapter(subcatAdapter);
 
 
-        SubCategoryName clickedName = subcategoryList.get(0);
+        SubCategoryName clickedName = newSubCategoryList.get(0);
         if (clickedName.getMovie_details().length() == 0) {
             if (hasTopMovie)
                 top_movielist.requestFocus();

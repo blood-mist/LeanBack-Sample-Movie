@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -51,5 +52,19 @@ private RecyclerView searchRecyclerList;
         Logger.d("onUserInteraction", "User status changed");
         getApp().active();
 
+    }
+
+    private long mLastKeyDownTime = 0;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        long current = System. currentTimeMillis();
+        boolean res = false;
+        if (current - mLastKeyDownTime < 300 ) {
+            res = true;
+        } else {
+            res = super.onKeyDown(keyCode, event);
+            mLastKeyDownTime = current;
+        }
+        return res;
     }
 }

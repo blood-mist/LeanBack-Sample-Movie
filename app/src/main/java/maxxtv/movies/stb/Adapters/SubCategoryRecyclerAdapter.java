@@ -50,13 +50,8 @@ public class SubCategoryRecyclerAdapter extends RecyclerView.Adapter<SubCategory
         SubCategoryName itemName = subcategoryList.get(position);
         selected_item1 = 0;
 
-        if(position == 0){
-            holder.title.setNextFocusLeftId(holder.title.getId());
-        }
 
-        if(position == subcategoryList.size()-1){
-            holder.title.setNextFocusRightId(holder.title.getId());
-        }
+
 
         if (flag) {
             if (selected_item1 == position) {

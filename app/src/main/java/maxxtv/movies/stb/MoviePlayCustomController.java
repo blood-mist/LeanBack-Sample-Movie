@@ -587,6 +587,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
     }
 
     private void playNextorPrevMovie(int NEXTorPREV) {
+        controller.hide();
         try {
             if (moviesList.size() > 0) {
                 Movie temp;
