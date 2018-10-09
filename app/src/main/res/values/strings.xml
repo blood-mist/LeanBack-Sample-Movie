@@ -36,7 +36,7 @@
     <string name="msg_resume_movie">Do you want to continue watching from where you left?</string>
     <string name="search_url">movies/search</string>
     <string name="movie_fav_link">movies/favorite/addfavorite</string>
-    <string name="btn_watch">Unlock &amp;Play</string>
+    <string name="btn_watch">Unlock &amp; Play</string>
     <string name="parental_url">movies/parentallock</string>
     <string name="send_crash_url">http://worldondemand.net/app/json_v5/app_error.php</string>
     <string name="imdb_details">https://api.themoviedb.org/3/movie/</string>
@@ -54,4 +54,5 @@
     <string name="loading_movies">Loading Movies</string>
     <string name="connection_failed">Connection Failure</string>
     <string name="sign_in">Sign In</string>
+    <string name="new_movies">RECENTLY ADDED</string>
 </resources>

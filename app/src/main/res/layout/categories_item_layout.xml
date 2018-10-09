@@ -23,6 +23,7 @@
                     android:id="@+id/category_image"
                     android:layout_width="240dp"
                     android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
                     android:layout_height="330dp"
                     android:src="@drawable/placeholder" />
                 <View

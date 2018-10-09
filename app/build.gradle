@@ -8,8 +8,8 @@ android {
         applicationId "androidtv.movies.stb"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 3
-        versionName "1.0.3"
+        versionCode 7
+        versionName "1.0.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

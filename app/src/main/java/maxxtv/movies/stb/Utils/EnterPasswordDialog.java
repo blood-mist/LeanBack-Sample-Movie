@@ -77,7 +77,7 @@ public class EnterPasswordDialog {
     }
 
 
-    private static Dialog buildEnterPasswordInterface(Context context) {
+    private static Dialog buildEnterPasswordInterface(Context context, boolean flag_to_end_activity) {
         final Dialog passwordDialog = new Dialog(context);
         passwordDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         passwordDialog.setContentView(R.layout.dialog_enter_password);
@@ -86,7 +86,7 @@ public class EnterPasswordDialog {
 
         if (context.getClass().getName()
                 .equals(MoviePlayCustomController.class.getName())) {
-            dismissPlayerOnBackPress(passwordDialog, context);
+            dismissPlayerOnBackPress(passwordDialog, context, flag_to_end_activity);
         }
 
 
@@ -94,7 +94,7 @@ public class EnterPasswordDialog {
 
     }
 
-    private static void dismissPlayerOnBackPress(final Dialog passwordDialog, final Context context) {
+    private static void dismissPlayerOnBackPress(final Dialog passwordDialog, final Context context, final boolean flag_to_end_activity) {
         passwordDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
 
             @Override
@@ -103,7 +103,8 @@ public class EnterPasswordDialog {
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_BACK:
                         passwordDialog.dismiss();
-                        ((MoviePlayCustomController) context).finish();
+                        if (flag_to_end_activity)
+                            ((MoviePlayCustomController) context).finish();
                         return true;
                     default:
                         return false;
@@ -116,7 +117,7 @@ public class EnterPasswordDialog {
             final Context context, final int movieId,
             final boolean flag_to_end_activity, final String authToken) {
 
-        final Dialog passwordDialog = buildEnterPasswordInterface(context);
+        final Dialog passwordDialog = buildEnterPasswordInterface(context, flag_to_end_activity);
         final Button confirm = (Button) passwordDialog.findViewById(R.id.btn_confirm);
         final EditText passwordField = (EditText) passwordDialog
                 .findViewById(R.id.et_buy_passowrd);

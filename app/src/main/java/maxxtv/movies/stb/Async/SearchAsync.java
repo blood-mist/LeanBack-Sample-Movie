@@ -26,13 +26,11 @@ import maxxtv.movies.stb.Utils.common.LinkConfig;
 public class SearchAsync extends AsyncTask<String,String,String> {
     private Context context;
     private SearchCallback asyncback;
-    private String movieName;
     private CustomDialogManager loading;
     private String authToken;
-    public SearchAsync(Context context, SearchCallback asyncback, String movieName, String authToken) {
+    public SearchAsync(Context context, SearchCallback asyncback, String authToken) {
         this.context=context;
         this.asyncback=asyncback;
-        this.movieName=movieName;
         this.authToken=authToken;
         this.loading=new CustomDialogManager(context,CustomDialogManager.LOADING);
 
@@ -42,7 +40,9 @@ public class SearchAsync extends AsyncTask<String,String,String> {
     protected void onPreExecute() {
         super.onPreExecute();
         loading.build();
-        loading.show();
+        try {
+            loading.show();
+        }catch(Exception ignored){}
         loading.getInnerObject().setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
@@ -71,7 +71,7 @@ public class SearchAsync extends AsyncTask<String,String,String> {
         }
         if (!utc.equals(DownloadUtil.NotOnline)
                 && !utc.equals(DownloadUtil.ServerUnrechable)) {
-            String subCategory_url = strings[0] + "?" + LinkConfig.getHashCode(utc)+"&movieName="+movieName;
+            String subCategory_url = strings[0] + "?" + LinkConfig.getHashCode(utc)+"&movieName="+strings[1];
             Log.d("subCategory_url", subCategory_url);
             DownloadUtil dUtil = new DownloadUtil(subCategory_url, context,authToken);
 
@@ -86,7 +86,6 @@ public class SearchAsync extends AsyncTask<String,String,String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         if(!isCancelled()&&s != null)
-        asyncback.getSearchMovies(s);
-        loading.dismiss();
+        asyncback.getSearchMovies(s,loading);
     }
 }

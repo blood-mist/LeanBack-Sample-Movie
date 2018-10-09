@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +27,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import io.fabric.sdk.android.services.concurrency.AsyncTask;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import maxxtv.movies.stb.Adapters.CategoryRecyclerViewAdapter;
@@ -36,11 +36,11 @@ import maxxtv.movies.stb.Entity.AddDataToFav;
 import maxxtv.movies.stb.Entity.Movie;
 import maxxtv.movies.stb.Entity.MovieCategoryParent;
 import maxxtv.movies.stb.Interface.SearchCallback;
-import maxxtv.movies.stb.Parser.MarketAppDetailParser;
 import maxxtv.movies.stb.Utils.CustomDialogManager;
 import maxxtv.movies.stb.Utils.DownloadUtil;
 import maxxtv.movies.stb.Utils.Logger;
 import maxxtv.movies.stb.Utils.LoginFileUtils;
+import maxxtv.movies.stb.Utils.MovieEnum;
 import maxxtv.movies.stb.Utils.common.LinkConfig;
 
 public class MovieCategoryActivity extends AppCompatActivity implements SearchCallback {
@@ -53,7 +53,7 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
     private MovieRecyclerViewAdapter playlist_adapter;
     private String searched_movie;
     private String authToken;
-    private SearchAsync searchAsync = null;
+    private SearchAsync searchAsync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +77,7 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(searchAsync != null){
+        if (searchAsync != null) {
             searchAsync.cancel(true);
         }
         EventBus.getDefault().unregister(this);
@@ -202,9 +202,9 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
     @Override
     public void onBackPressed() {
 
-        if(searchAsync != null&&searchAsync.getStatus() == android.os.AsyncTask.Status.RUNNING){
+        if (searchAsync != null && searchAsync.getStatus() == android.os.AsyncTask.Status.RUNNING) {
             searchAsync.cancel(true);
-        }else
+        } else
             super.onBackPressed();
     }
 
@@ -229,7 +229,7 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
                 fixedtopArrayList.add(plusmovie);
             }
 
-            final MovieRecyclerViewAdapter toplist_adapter = new MovieRecyclerViewAdapter(this, topArrayList, fixedtopArrayList, top_list, "Top Movies");
+            final MovieRecyclerViewAdapter toplist_adapter = new MovieRecyclerViewAdapter(this, topArrayList, fixedtopArrayList, top_list, getString(R.string.new_movies));
             top_list.setLayoutManager(new LinearLayoutManager(MovieCategoryActivity.this, LinearLayoutManager.HORIZONTAL, false));
             top_list.setAdapter(toplist_adapter);
             noTopMovie.setVisibility(View.GONE);
@@ -314,7 +314,7 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
                     Toast.makeText(MovieCategoryActivity.this, "Please enter text to search", Toast.LENGTH_SHORT).show();
                     search_text.requestFocus();
                 } else {
-                   loadSearchAsyn();
+                    loadSearchAsyn();
                 }
             }
 
@@ -324,14 +324,13 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
 
     private void loadSearchAsyn() {
         searched_movie = search_text.getText().toString();
-        if(searchAsync != null && searchAsync.getStatus() == android.os.AsyncTask.Status.RUNNING)
-        {
+        if (searchAsync != null)
             searchAsync.cancel(true);
-        }
-        searchAsync = new SearchAsync(MovieCategoryActivity.this, MovieCategoryActivity.this, searched_movie, authToken);
-        searchAsync.execute(LinkConfig.getString(MovieCategoryActivity.this, R.string.search_url));
-    }
+        searchAsync = new SearchAsync(MovieCategoryActivity.this, MovieCategoryActivity.this, authToken);
+        searchAsync.execute(LinkConfig.getString(MovieCategoryActivity.this, R.string.search_url), searched_movie);
 
+
+    }
 
 
     public void openSetting() {
@@ -364,15 +363,17 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
             finish();
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
     }
 
     @Override
-    public void getSearchMovies(String s) {
+    public void getSearchMovies(String s, final CustomDialogManager loading) {
         Log.d("movies", s);
         if (s.equalsIgnoreCase(DownloadUtil.NotOnline) || s.equalsIgnoreCase(DownloadUtil.ServerUnrechable)) {
+            loading.dismiss();
             final CustomDialogManager noInternet = new CustomDialogManager(this, CustomDialogManager.ALERT);
             noInternet.build();
             noInternet.setTitle(getString(R.string.no_internet_title));
@@ -401,6 +402,7 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
             noInternet.show();
         } else {
             if (s.equals("")) {
+                loading.dismiss();
                 final CustomDialogManager manager = new CustomDialogManager(MovieCategoryActivity.this, CustomDialogManager.MESSAGE);
                 manager.build();
                 manager.setTitle("Movie Not Found");
@@ -415,97 +417,123 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
                 });
                 manager.show();
                 search_text.requestFocus();
-            }
-            ArrayList<Movie> searchmovieList = new ArrayList<>();
-            try {
-                JSONObject searchMoiveJobj = new JSONObject(s);
-                JSONArray searchJArray = searchMoiveJobj.getJSONArray("movies");
-
-                if (searchJArray.length() == 0) {
-                    final CustomDialogManager manager = new CustomDialogManager(MovieCategoryActivity.this, CustomDialogManager.MESSAGE);
-                    manager.build();
-                    manager.setTitle("Movie Not Found");
-                    manager.dismissDialogOnBackPressed();
-                    manager.setMessage("Movie Not Found ", " Requested movie couldn\'t be found.");
-                    manager.addDissmissButtonToDialog();
-                    manager.setExtraButton("", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            manager.dismiss();
-                        }
-                    });
-                    manager.show();
-                    search_text.requestFocus();
-                } else {
-                    for (int i = 0; i < searchJArray.length(); i++) {
-                        realm.beginTransaction();
-                        JSONObject insideObj = searchJArray.getJSONObject(i);
-                        Movie searchMovie = new Movie();
-                        searchMovie.setMovie_id(insideObj.getInt("id"));
-                        searchMovie.setMovie_name(insideObj.getString("name"));
-                        try {
-                            searchMovie.setIsFav(Integer.parseInt(insideObj.getString("isFav")));
-                        }catch (Exception e){
-                            searchMovie.setIsFav(0);
-                        }
-                        searchMovie.setIs_Imdb(Integer.parseInt(insideObj.getString("imdbID")));
-                        searchMovie.setImdb_id(String.valueOf(insideObj.getInt("movie_id")));
-                        searchMovie.setMovie_url(insideObj.getString("movie_url"));
-                        searchMovie.setParental_lock(Integer.parseInt(insideObj.getString("parental_lock")));
-                        Movie movie = realm.where(Movie.class).equalTo("movie_id", insideObj.getInt("id")).findFirst();
-                        if(movie!=null) {
-                            if (movie.getParental_lock() == 1)
-                                searchMovie.setParental_lock(1);
-                        }
-                        searchMovie.setMovie_description(insideObj.getString("description"));
-                        searchMovie.setMovie_logo(insideObj.getString("movie_logo"));
-                        searchMovie.setIs_youtube(Integer.parseInt(insideObj.getString("is_youtube")));
-                        searchMovie.setPreview_url(insideObj.getString("preview_url"));
-                        searchMovie.setMovie_category_id(Integer.parseInt(insideObj.getString("movie_category_id")));
-                        searchmovieList.add(searchMovie);
-                        realm.insertOrUpdate(searchMovie);
-                        realm.commitTransaction();
-                    }
-                    showMoviesinActivity(searchmovieList);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else {
+                final ArrayList<Movie> searchmovieList = new ArrayList<>();
                 try {
-                    JSONObject root = new JSONObject(s);
-                    if (root.getString("error_code").equals("405")) {
-                        LinkConfig.deleteAuthCodeFile();
-                        final CustomDialogManager invalidTokenDialog = new CustomDialogManager(MovieCategoryActivity.this, CustomDialogManager.ALERT);
-                        invalidTokenDialog.build();
-                        invalidTokenDialog.setTitle("Invalid Token");
-                        invalidTokenDialog.setMessage("", root.getString("message") + ",please re-login");
-                        invalidTokenDialog.getInnerObject().setCancelable(false);
-                        invalidTokenDialog.exitApponBackPress();
-                        invalidTokenDialog.setPositiveButton("OK", new View.OnClickListener() {
+                    JSONObject searchMoiveJobj = new JSONObject(s);
+                    final JSONArray searchJArray = searchMoiveJobj.getJSONArray("movies");
+
+                    if (searchJArray.length() == 0) {
+                        loading.dismiss();
+                        final CustomDialogManager manager = new CustomDialogManager(MovieCategoryActivity.this, CustomDialogManager.MESSAGE);
+                        manager.build();
+                        manager.setTitle("Movie Not Found");
+                        manager.dismissDialogOnBackPressed();
+                        manager.setMessage("Movie Not Found ", " Requested movie couldn\'t be found.");
+                        manager.addDissmissButtonToDialog();
+                        manager.setExtraButton("", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent entryPointIntent = new Intent(MovieCategoryActivity.this, EntryPoint.class);
-                                entryPointIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                invalidTokenDialog.dismiss();
-                                startActivity(entryPointIntent);
-
-
+                                manager.dismiss();
                             }
                         });
-                        invalidTokenDialog.show();
+                        manager.show();
+                        search_text.requestFocus();
+                    } else {
+                        Thread searchThread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    final Realm searchRealm = Realm.getDefaultInstance();
+                                    for (int i = 0; i < searchJArray.length(); i++) {
+                                        JSONObject insideObj = searchJArray.getJSONObject(i);
+                                        final Movie searchMovie = new Movie();
+                                        searchMovie.setMovie_id(insideObj.getInt("id"));
+                                        searchMovie.setMovie_name(insideObj.getString("name"));
+                                        try {
+                                            searchMovie.setIsFav(Integer.parseInt(insideObj.getString("isFav")));
+                                        } catch (Exception e) {
+                                            searchMovie.setIsFav(0);
+                                        }
+                                        searchMovie.setIs_Imdb(Integer.parseInt(insideObj.getString("imdbID")));
+                                        searchMovie.setImdb_id(String.valueOf(insideObj.getInt("movie_id")));
+                                        searchMovie.setMovie_url(insideObj.getString("movie_url"));
+                                        searchMovie.setParental_lock(Integer.parseInt(insideObj.getString("parental_lock")));
+                                        Movie movie = searchRealm.where(Movie.class).equalTo("movie_id", insideObj.getInt("id")).findFirst();
+                                        if (movie != null) {
+                                            if (movie.getParental_lock() == 1)
+                                                searchMovie.setParental_lock(1);
+                                        }
+                                        searchMovie.setMovie_description(insideObj.getString("description"));
+                                        searchMovie.setMovie_logo(insideObj.getString("movie_logo"));
+                                        searchMovie.setIs_youtube(Integer.parseInt(insideObj.getString("is_youtube")));
+                                        searchMovie.setPreview_url(insideObj.getString("preview_url"));
+                                        searchMovie.setMovie_category_id(Integer.parseInt(insideObj.getString("movie_category_id")));
+                                        searchmovieList.add(searchMovie);
 
+                                        searchRealm.executeTransaction(new Realm.Transaction() {
+                                            @Override
+                                            public void execute(@NonNull Realm realm) {
+                                                realm.insertOrUpdate(searchMovie);
+                                            }
+                                        });
+                                    }
+                                    searchRealm.close();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showMoviesinActivity(searchmovieList,loading);
+                                        }
+                                    });
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                        searchThread.start();
 
                     }
-                } catch (JSONException e1) {
-                    e1.printStackTrace();
-                    CustomDialogManager.ReUsedCustomDialogs.showDataNotFetchedAlert(MovieCategoryActivity.this);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    try {
+                        JSONObject root = new JSONObject(s);
+                        if (root.getString("error_code").equals("405")) {
+                            LinkConfig.deleteAuthCodeFile();
+                            final CustomDialogManager invalidTokenDialog = new CustomDialogManager(MovieCategoryActivity.this, CustomDialogManager.ALERT);
+                            invalidTokenDialog.build();
+                            invalidTokenDialog.setTitle("Invalid Token");
+                            invalidTokenDialog.setMessage("", root.getString("message") + ",please re-login");
+                            invalidTokenDialog.getInnerObject().setCancelable(false);
+                            invalidTokenDialog.exitApponBackPress();
+                            invalidTokenDialog.setPositiveButton("OK", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent entryPointIntent = new Intent(MovieCategoryActivity.this, EntryPoint.class);
+                                    entryPointIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    invalidTokenDialog.dismiss();
+                                    startActivity(entryPointIntent);
+
+
+                                }
+                            });
+                            invalidTokenDialog.show();
+
+
+                        }
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                        CustomDialogManager.ReUsedCustomDialogs.showDataNotFetchedAlert(MovieCategoryActivity.this);
+                    }
                 }
             }
         }
     }
 
-    private void showMoviesinActivity(ArrayList<Movie> searchmovieList) {
+    private void showMoviesinActivity(ArrayList<Movie> searchmovieList, CustomDialogManager loading) {
         Intent searchintent = new Intent(MovieCategoryActivity.this, SearchActivity.class);
-        searchintent.putParcelableArrayListExtra("search_movie_list", searchmovieList);
+        MovieEnum.setData(searchmovieList);
         startActivity(searchintent);
+        loading.dismiss();
     }
 }

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -25,8 +24,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +31,7 @@ import android.widget.Toast;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -52,20 +50,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
-import io.realm.RealmQuery;
 import maxxtv.movies.stb.Async.ApkDownloader;
 import maxxtv.movies.stb.Async.ImdbCredits;
 import maxxtv.movies.stb.Async.ImdbDetails;
 import maxxtv.movies.stb.Entity.ImdbPojo;
 import maxxtv.movies.stb.Entity.Movie;
-import maxxtv.movies.stb.Entity.ShowBgProgress;
 import maxxtv.movies.stb.Entity.ShowFragmentEntity;
 import maxxtv.movies.stb.Fragments.InfoFragment;
 import maxxtv.movies.stb.Fragments.OptionsFragment;
@@ -77,7 +71,6 @@ import maxxtv.movies.stb.Utils.DownloadUtil;
 import maxxtv.movies.stb.Utils.EnterPasswordDialog;
 import maxxtv.movies.stb.Utils.Logger;
 import maxxtv.movies.stb.Utils.LoginFileUtils;
-import maxxtv.movies.stb.Utils.Mcrypt;
 import maxxtv.movies.stb.Utils.MovieInFile;
 import maxxtv.movies.stb.Utils.PackageUtils;
 import maxxtv.movies.stb.Utils.ParentalLockUtils;
@@ -95,10 +88,10 @@ public class MoviePlayCustomController extends AppCompatActivity implements
     private static final int NEXT_MOVIE = 1;
     private static final int PREV_MOVIE = 2;
     private TextView movieTitle, bgCurrrentTime, bgEndTime;
-    private LinearLayout bgSeekLayout;
     final Context mContext = this;
     Uri video;
     ArrayList<Movie> moviesList;
+    private boolean isMovieLoaded=false;
     String username, macAddress = "";
     SurfaceView videoSurface;
     MediaPlayer player;
@@ -106,7 +99,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
     ;
     VideoControllerView controller;
     SurfaceHolder videoHolder;
-    private CustomDialogManager loading_dialog;
+    private AVLoadingIndicatorView movieLoadingIndicator;
     private Bundle extras;
     private String final_video_url;
     private Movie thisMovie;
@@ -115,10 +108,12 @@ public class MoviePlayCustomController extends AppCompatActivity implements
     private Runnable r;
     private Realm realm;
     private String movieName, overview;
-    private ProgressBar bgSeekBar;
 
     private ImdbPojo imdbGlobal;
     private String authToken;
+    private ImdbDetails loadImdbDetails;
+    private ImdbCredits loadImdbCredits;
+    private MovieLinkLoader loadMovieTask;
 //    Timer timer;
 
     //    private Handler handlerChangeChannelFromNumbers = new Handler();
@@ -166,6 +161,8 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         }
     };
 
+
+
     /*TimerTask timerTask = new TimerTask() {
 
         @Override
@@ -189,13 +186,6 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         }
         int position = player.getCurrentPosition();
         int duration = player.getDuration();
-        if (bgSeekBar != null) {
-            if (duration > 0) {
-                // use long to avoid overflow
-                long pos = 1000L * position / duration;
-                bgSeekBar.setProgress((int) pos);
-            }
-        }
 
     }
 
@@ -207,18 +197,8 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         realm = Realm.getDefaultInstance();
         moviesList = getIntent().getParcelableArrayListExtra("movie_list");
         movieTitle = (TextView) findViewById(R.id.movie_title);
-        bgSeekBar = (ProgressBar) findViewById(R.id.background_seekbar);
-        bgSeekLayout = (LinearLayout) findViewById(R.id.background_seekbar_layout);
         videoSurface = (SurfaceView) findViewById(R.id.videoSurface);
-        bgSeekBar = (SeekBar) findViewById(R.id.background_seekbar);
-        if (bgSeekBar != null) {
-            if (bgSeekBar instanceof SeekBar) {
-                SeekBar seeker = (SeekBar) bgSeekBar;
-                seeker.setOnSeekBarChangeListener(mSeekListener);
-            }
-            bgSeekBar.setMax(1000);
-            bgSeekBar.getProgressDrawable().setColorFilter(
-                    Color.WHITE, android.graphics.PorterDuff.Mode.SRC_IN);
+        movieLoadingIndicator = findViewById(R.id.movie_loader);
             videoHolder = videoSurface.getHolder();
             videoHolder.addCallback(this);
             player = new MediaPlayer();
@@ -235,7 +215,6 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 
             int currentMovieId = extras.getInt("currentMovieId");
             checkToLoadMovieLink(MoviePlayCustomController.this, currentMovieId, false);
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -243,16 +222,20 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         /* Do something */
         if (showFragmentEntity.isShowfrag()) {
             movieTitle.setVisibility(View.VISIBLE);
-            OptionsFragment optionsFragment = OptionsFragment.newInstance(currentMovieId, "dfgdfgfd");
-            FragmentTransaction optionTransaction = getSupportFragmentManager().beginTransaction();
-            optionTransaction.replace(R.id.controller_fragment_container, optionsFragment, "optionsFragment").commit();
+            if(isMovieLoaded) {
+                OptionsFragment optionsFragment = OptionsFragment.newInstance(currentMovieId, "dfgdfgfd");
+                FragmentTransaction optionTransaction = getSupportFragmentManager().beginTransaction();
+                optionTransaction.replace(R.id.controller_fragment_container, optionsFragment, "optionsFragment").commit();
+            }
 
         } else {
             movieTitle.setVisibility(View.GONE);
             Fragment optionsFragment = getSupportFragmentManager().findFragmentByTag("optionsFragment");
             if (optionsFragment != null) {
-                FragmentTransaction optTransation = getSupportFragmentManager().beginTransaction();
-                optTransation.remove(optionsFragment).commit();
+                try {
+                    FragmentTransaction optTransation = getSupportFragmentManager().beginTransaction();
+                    optTransation.remove(optionsFragment).commit();
+                }catch (Exception ignored){}
             }
 
 
@@ -260,19 +243,6 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 
     }
 
-    ;
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(ShowBgProgress showBgProgress) {
-        /* Do something */
-        if (showBgProgress.isShowbgProgress()) {
-            bgSeekLayout.setVisibility(View.VISIBLE);
-
-        } else {
-            bgSeekLayout.setVisibility(View.INVISIBLE);
-        }
-
-    }
 
     public void startHandler() {
         handler.postDelayed(r, 5000);
@@ -284,18 +254,22 @@ public class MoviePlayCustomController extends AppCompatActivity implements
     }
 
     public void showInfoFragment() {
-        final InfoFragment infoFragment = InfoFragment.newInstance("infoFragment", this.imdbGlobal);
-        final FragmentTransaction showinfo = getSupportFragmentManager().beginTransaction();
-        showinfo.replace(R.id.controller_fragment_container, infoFragment, "infoFragment").addToBackStack("optionsFragment").commit();
-        Handler hideHandler = new Handler();
-        hideHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Fragment infoFrag = getSupportFragmentManager().findFragmentByTag("infoFragment");
-                FragmentTransaction infoTransation = getSupportFragmentManager().beginTransaction();
-                infoTransation.remove(infoFrag).commit();
-            }
-        }, 3000);
+        try {
+            final InfoFragment infoFragment = InfoFragment.newInstance("infoFragment", this.imdbGlobal);
+            final FragmentTransaction showinfo = getSupportFragmentManager().beginTransaction();
+            showinfo.replace(R.id.controller_fragment_container, infoFragment, "infoFragment").addToBackStack("optionsFragment").commit();
+            Handler hideHandler = new Handler();
+            hideHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Fragment infoFrag = getSupportFragmentManager().findFragmentByTag("infoFragment");
+                        FragmentTransaction infoTransation = getSupportFragmentManager().beginTransaction();
+                        infoTransation.remove(infoFrag).commit();
+                    }catch (Exception ignored){}
+                }
+            }, 3000);
+        }catch(Exception ignored){}
 
 
     }
@@ -326,7 +300,8 @@ public class MoviePlayCustomController extends AppCompatActivity implements
             player.reset();
         }
         if (toLoadMovie.getIs_Imdb() == 1) {
-            new ImdbDetails(MoviePlayCustomController.this, MoviePlayCustomController.this).execute(getResources().getString(R.string.imdb_details) + toLoadMovie.getImdb_id() + "?api_key=" + API_KEY + "&language=en-US");
+            loadImdbDetails = new ImdbDetails(MoviePlayCustomController.this, MoviePlayCustomController.this);
+            loadImdbDetails.execute(getResources().getString(R.string.imdb_details) + toLoadMovie.getImdb_id() + "?api_key=" + API_KEY + "&language=en-US");
         } else {
             imdbGlobal = new ImdbPojo();
             imdbGlobal.setWriters("N/A");
@@ -341,8 +316,9 @@ public class MoviePlayCustomController extends AppCompatActivity implements
             movieTitle.setText(toLoadMovie.getMovie_name());
             final String media_url = LinkConfig.getString(context,
                     LinkConfig.MOVIE_PLAY_LINK) + "?movieId=" + movieId;
-            new MovieLinkLoader(context, movieId, flag_to_end_activity, authToken)
-                    .execute(media_url);
+            isMovieLoaded=false;
+            loadMovieTask = new MovieLinkLoader(context, movieId, flag_to_end_activity, authToken);
+            loadMovieTask.execute(media_url);
             //show progressbar
         } else {
 
@@ -405,27 +381,15 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 
     @Override
     protected void onStop() {
-        super.onStop();
-        if (player.isPlaying()) {
-            try {
-                if (player.getCurrentPosition() > 0) {
-                    MovieInFile movieinfile = new MovieInFile(thisMovie,
-                            player.getCurrentPosition());
-                    write(currentMovieId + "", movieinfile);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            player.stop();
-        }
-        EventBus.getDefault().unregister(this);
         try {
-//            timer.cancel();
-        } catch (NullPointerException ignored) {
+            player.stop();
+            player.reset();
+            player.release();
+            } catch (Exception ignored) {
         }
         myHandler.removeCallbacks(null);
         finish();
+        super.onStop();
 
     }
 
@@ -485,7 +449,11 @@ public class MoviePlayCustomController extends AppCompatActivity implements
             case KeyEvent.KEYCODE_DPAD_LEFT:
                 if (!controller.isShowing()) {
                     startHandler();
-                    player.seekTo(player.getCurrentPosition() - 10000);
+                    try{
+                        if(player.isPlaying())
+                            player.seekTo(player.getCurrentPosition() - 10000);
+                    }catch (Exception ignored){}
+
                     return true;
                 } else return super.onKeyDown(keyCode, event);
 
@@ -493,7 +461,12 @@ public class MoviePlayCustomController extends AppCompatActivity implements
             case KeyEvent.KEYCODE_DPAD_RIGHT:
                 startHandler();
                 if (!controller.isShowing()) {
-                    player.seekTo(player.getCurrentPosition() + 10000);
+                    try{
+                        if(player.isPlaying()){
+                            player.seekTo(player.getCurrentPosition() + 10000);
+                        }
+                    }catch (Exception ignored){}
+
                     return true;
                 } else return super.onKeyDown(keyCode, event);
 
@@ -521,12 +494,21 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 
             case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
                 startHandler();
-                player.seekTo(player.getCurrentPosition() + 10000);
+                try{
+                    if(player.isPlaying()){
+                        player.seekTo(player.getCurrentPosition() + 10000);
+                    }
+                }catch (Exception ignored){}
+
                 controller.show();
                 return true;
             case KeyEvent.KEYCODE_MEDIA_REWIND:
                 startHandler();
-                player.seekTo(player.getCurrentPosition() - 10000);
+                try{
+                    if(player.isPlaying())
+                        player.seekTo(player.getCurrentPosition() - 10000);
+                }catch (Exception ignored){}
+
                 controller.show();
                 return true;
 
@@ -650,6 +632,19 @@ public class MoviePlayCustomController extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        if (loadImdbDetails != null && loadImdbDetails.getStatus() == android.os.AsyncTask.Status.RUNNING)
+            loadImdbDetails.cancel(true);
+        if (loadImdbCredits != null && loadImdbCredits.getStatus() == android.os.AsyncTask.Status.RUNNING)
+            loadImdbCredits.cancel(true);
+        if (loadMovieTask != null && loadMovieTask.getStatus() == android.os.AsyncTask.Status.RUNNING)
+            loadMovieTask.cancel(true);
+
+        myHandler.removeCallbacks(null);
+        try{
+            player.stop();
+            player.reset();
+            player.release();
+        }catch (Exception ignored){}
         this.finish();
 
     }
@@ -723,28 +718,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 
 
         Logger.d("currentMovieId", currentMovieId + "   " + final_video_url);
-
-        loading_dialog = new CustomDialogManager(
-                context, CustomDialogManager.LOADING);
-        loading_dialog.build();
-        loading_dialog.setMessage("", "Streaming...");
-        loading_dialog.show();
-        loading_dialog.getInnerObject().setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
-                if (keyCode == keyEvent.KEYCODE_BACK) {
-                    loading_dialog.dismiss();
-                    finish();
-                }
-                return false;
-            }
-        });
-        loading_dialog.setExtraButton(context.getResources().getString(R.string.btn_dismiss), new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        showProgressIndicator();
         Logger.d(TAG, "streamin dialog shown");
 
         /****************************************************************************/
@@ -753,7 +727,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         Logger.d(TAG, "START PLAYING VIDEO");
         if (player == null) player = new MediaPlayer();
         try {
-            player.setDataSource(context, Uri.parse(final_video_url));
+            player.setDataSource(this, Uri.parse(final_video_url));
             player.setOnPreparedListener(this);
             player.setOnCompletionListener(this);
             player.setOnErrorListener(this);
@@ -782,6 +756,10 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         }
     }
 
+    private void showProgressIndicator() {
+        movieLoadingIndicator.smoothToShow();
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         try {
@@ -808,7 +786,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
     // Implement MediaPlayer.OnPreparedListener
     @Override
     public void onPrepared(MediaPlayer mp) {
-        loading_dialog.dismiss();
+        hideLoadingIndicator();
         // progressDialog.dismiss();
         // full screen control for video
         videoSurface.postDelayed(new Runnable() {
@@ -859,7 +837,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                 Logger.d("PALO Alert dialog ko", Integer.parseInt(last_duration)
                         + "");
                 // player.pause();
-                loading_dialog = new CustomDialogManager(
+                final CustomDialogManager loading_dialog = new CustomDialogManager(
                         MoviePlayCustomController.this,
                         getString(R.string.msg_resume_movie),
                         CustomDialogManager.MESSAGE);
@@ -904,9 +882,8 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         }
 
         mp.start();
+        isMovieLoaded=true;
         getApp().setVideoPlaying(true);
-        bgSeekBar.setMax(player.getDuration());
-        bgSeekBar.setProgress(mp.getCurrentPosition());
         myHandler.postDelayed(UpdateSeekbar, 100);
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
@@ -941,9 +918,34 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 
     }
 
+    private void hideLoadingIndicator() {
+        movieLoadingIndicator.smoothToHide();
+    }
+
 
     @Override
     protected void onPause() {
+        if (player.isPlaying()) {
+            try {
+                if (player.getCurrentPosition() > 0) {
+                    MovieInFile movieinfile = new MovieInFile(thisMovie,
+                            player.getCurrentPosition());
+                    write(currentMovieId + "", movieinfile);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        myHandler.removeCallbacks(null);
+        try{
+            player.stop();
+            player.reset();
+            player.release();
+        }catch (Exception ignored){}
+
+        EventBus.getDefault().unregister(this);
+        finish();
         super.onPause();
     }
 
@@ -994,7 +996,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         mp.reset();
-        loading_dialog.dismiss();
+       hideLoadingIndicator();
         if (what == -38) {
             Logger.d("CheckingAMIHere", "Yes");
         } else {
@@ -1005,7 +1007,6 @@ public class MoviePlayCustomController extends AppCompatActivity implements
             Toast.makeText(MoviePlayCustomController.this, "ERROR PLAYING THE MEDIA",
                     Toast.LENGTH_LONG).show();
             myHandler.removeCallbacks(null);
-            bgSeekBar.setProgress(0);
             finish();
 
         }
@@ -1160,7 +1161,8 @@ public class MoviePlayCustomController extends AppCompatActivity implements
             movieDetails.setWriters("N/A");
             this.imdbGlobal = movieDetails;
         } else {
-            new ImdbCredits(MoviePlayCustomController.this, MoviePlayCustomController.this, movieDetails).execute(getResources().getString(R.string.imdb_details) + imdb_id + "/credits?api_key=" + API_KEY);
+            loadImdbCredits = new ImdbCredits(MoviePlayCustomController.this, MoviePlayCustomController.this, movieDetails);
+            loadImdbCredits.execute(getResources().getString(R.string.imdb_details) + imdb_id + "/credits?api_key=" + API_KEY);
         }
     }
 
@@ -1234,9 +1236,10 @@ public class MoviePlayCustomController extends AppCompatActivity implements
     private Runnable UpdateSeekbar = new Runnable() {
         public void run() {
             if (player != null) {
-                int startTime = player.getCurrentPosition();
-                bgSeekBar.setProgress((int) startTime);
-                myHandler.postDelayed(this, 100);
+                try {
+                    int startTime = player.getCurrentPosition();
+                    myHandler.postDelayed(this, 100);
+                }catch (Exception ignored){}
             }
         }
     };
@@ -1248,7 +1251,6 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         int currentMovieId;
         String media_url;
         String success;
-        private CustomDialogManager loading_dialog;
         private Context context;
         private boolean ServerError = false;
         private boolean flag_to_close_activity;
@@ -1309,30 +1311,17 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 
         @Override
         protected void onPreExecute() {
-            loading_dialog = new CustomDialogManager(context,
-                    CustomDialogManager.LOADING);
-            loading_dialog.build();
-            loading_dialog.show();
-            loading_dialog.getInnerObject().setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialogInterface) {
-                    cancel(true);
-                    onBackPressed();
-
-                }
-            });
+          showProgressIndicator();
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if(isCancelled()) {
+            if (isCancelled()) {
                 MoviePlayCustomController.this.finish();
-            }
-            else{
-                if (loading_dialog.isShowing())
-                    loading_dialog.hide();
+            } else {
                 if (result.equalsIgnoreCase(DownloadUtil.NotOnline) || result.equalsIgnoreCase(DownloadUtil.ServerUnrechable)) {
+                    hideLoadingIndicator();
                     final CustomDialogManager noInternet = new CustomDialogManager(context, CustomDialogManager.ALERT);
                     noInternet.build();
                     noInternet.setTitle(getString(R.string.connection_failed));

@@ -10,31 +10,36 @@ import android.view.KeyEvent;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import maxxtv.movies.stb.Adapters.MovieRecyclerViewAdapter;
 import maxxtv.movies.stb.Entity.Movie;
 import maxxtv.movies.stb.Utils.Logger;
+import maxxtv.movies.stb.Utils.MovieEnum;
 
 public class SearchActivity extends AppCompatActivity {
-private RecyclerView searchRecyclerList;
+    private RecyclerView searchRecyclerList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         findViews();
-        ArrayList<Movie> searchMovieList=getIntent().getParcelableArrayListExtra("search_movie_list");
-        addDataToRecyclerList(searchMovieList);
+        if (MovieEnum.hasData())
+            addDataToRecyclerList(MovieEnum.getData());
+        else
+            finish();
 
     }
 
     private void addDataToRecyclerList(ArrayList<Movie> searchMovieList) {
-        MovieRecyclerViewAdapter searchAdapter=new MovieRecyclerViewAdapter(SearchActivity.this,searchMovieList,searchRecyclerList);
-        searchRecyclerList.setLayoutManager(new GridLayoutManager(SearchActivity.this,7, LinearLayoutManager.VERTICAL,false));
+        MovieRecyclerViewAdapter searchAdapter = new MovieRecyclerViewAdapter(SearchActivity.this, searchMovieList, searchRecyclerList);
+        searchRecyclerList.setLayoutManager(new GridLayoutManager(SearchActivity.this, 7, LinearLayoutManager.VERTICAL, false));
         searchRecyclerList.setAdapter(searchAdapter);
     }
 
     private void findViews() {
-        searchRecyclerList= (RecyclerView) findViewById(R.id.search_movie_list);
+        searchRecyclerList = (RecyclerView) findViewById(R.id.search_movie_list);
     }
 
     @Override
@@ -55,11 +60,12 @@ private RecyclerView searchRecyclerList;
     }
 
     private long mLastKeyDownTime = 0;
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        long current = System. currentTimeMillis();
+        long current = System.currentTimeMillis();
         boolean res = false;
-        if (current - mLastKeyDownTime < 300 ) {
+        if (current - mLastKeyDownTime < 300) {
             res = true;
         } else {
             res = super.onKeyDown(keyCode, event);

@@ -27,9 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.SeekBar;
 import android.widget.TextView;
-
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.greenrobot.eventbus.EventBus;
@@ -38,7 +36,6 @@ import java.lang.ref.WeakReference;
 import java.util.Formatter;
 import java.util.Locale;
 
-import maxxtv.movies.stb.Entity.ShowBgProgress;
 import maxxtv.movies.stb.Entity.ShowFragmentEntity;
 import maxxtv.movies.stb.Utils.Logger;
 
@@ -384,7 +381,6 @@ public class VideoControllerView extends FrameLayout {
      *                the controller until hide() is called.
      */
     public void show(int timeout) {
-        EventBus.getDefault().post(new ShowBgProgress(false));
         if (!mShowing && mAnchor != null) {
             setProgress();
 //            if (mMenuButton != null && mMenuButton.getVisibility() == View.VISIBLE) {
@@ -437,7 +433,6 @@ public class VideoControllerView extends FrameLayout {
         }
         mShowing = false;
         EventBus.getDefault().post(new ShowFragmentEntity(false));
-        EventBus.getDefault().post(new ShowBgProgress(true));
     }
 
     private String stringForTime(int timeMs) {

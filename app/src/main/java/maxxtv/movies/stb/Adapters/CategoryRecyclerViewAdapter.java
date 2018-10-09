@@ -108,7 +108,7 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryRe
         GlideApp.with(context)
                 .load(thumbUrl)
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .override(300,270)
+                .override(240,330)
                 .placeholder(R.drawable.placeholder)
                 .into(holder.imageItems);
         GradientDrawable drawable;

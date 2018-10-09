@@ -24,7 +24,7 @@
                 android:id="@+id/top_movies"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TOP MOVIES"
+                android:text="@string/new_movies"
                 android:padding="10dp"
                 android:textColor="#ffffff"
                 android:textSize="16sp"
