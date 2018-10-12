@@ -1,5 +1,6 @@
 package maxxtv.movies.stb;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -352,19 +353,19 @@ public class MoviePlayCustomController extends AppCompatActivity implements
             }
         });
 
-        exoPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                simpleExoPlayer.setPlayWhenReady(true);
-            }
-        });
-
-        exoPause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                simpleExoPlayer.setPlayWhenReady(false);
-            }
-        });
+//        exoPlay.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                simpleExoPlayer.setPlayWhenReady(true);
+//            }
+//        });
+//
+//        exoPause.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                simpleExoPlayer.setPlayWhenReady(false);
+//            }
+//        });
 
     }
 
@@ -557,14 +558,14 @@ public class MoviePlayCustomController extends AppCompatActivity implements
     @Override
     protected void onStop() {
         releasePlayer();
-        try {
-            player.stop();
-            player.reset();
-            player.release();
-
-            } catch (Exception ignored) {
-        }
-        myHandler.removeCallbacks(null);
+//        try {
+//            player.stop();
+//            player.reset();
+//            player.release();
+//
+//            } catch (Exception ignored) {
+//        }
+//        myHandler.removeCallbacks(null);
         finish();
         super.onStop();
 
@@ -575,20 +576,20 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         releasePlayer();
 
         // if (player != null) {
-        try {
-            player.stop();
-
-            try {
-                player.reset();
-            } catch (IllegalStateException ex) {
-                Logger.printStackTrace(ex);
-            }
-
-            player.release();
-            player = null;
-        } catch (Exception e) {
-            Logger.d("Exception at onDestroy Method", e.getMessage() + "");
-        }
+//        try {
+//            player.stop();
+//
+//            try {
+//                player.reset();
+//            } catch (IllegalStateException ex) {
+//                Logger.printStackTrace(ex);
+//            }
+//
+//            player.release();
+//            player = null;
+//        } catch (Exception e) {
+//            Logger.d("Exception at onDestroy Method", e.getMessage() + "");
+//        }
         super.onDestroy();
         this.finish();
     }
@@ -657,8 +658,9 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //                } else return super.onKeyDown(keyCode, event);
                 if(!videoSurface.isControllerVisible()){
                     if(simpleExoPlayer.getPlayWhenReady()){
-                        simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition()+1500);
+                        simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition()-15000);
                     }
+                    return true;
                 }else return super.onKeyDown(keyCode, event);
 
 
@@ -675,8 +677,9 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //                } else return super.onKeyDown(keyCode, event);
                 if(!videoSurface.isControllerVisible()){
                     if(simpleExoPlayer.getPlayWhenReady()){
-                        simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition()-1500);
+                        simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition()+15000);
                     }
+                    return true;
                 }else return super.onKeyDown(keyCode, event);
 
 
@@ -700,12 +703,14 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //                startHandler();
 //                controller.show();
 //                player.pause();
+                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
                 simpleExoPlayer.setPlayWhenReady(false);
                 return true;
             case KeyEvent.KEYCODE_MEDIA_PLAY:
 //                startHandler();
 //                controller.show();
 //                player.start();
+                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
                 simpleExoPlayer.setPlayWhenReady(true);
                 return true;
 
@@ -718,8 +723,9 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //                }catch (Exception ignored){}
 //
 //                controller.show();
-                if(simpleExoPlayer.getPlayWhenReady()){
+                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady()){
                     simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition()+1500);
+
                 }
                 videoSurface.showController();
                 return true;
@@ -732,7 +738,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //
 //                controller.show();
 //                return true;
-                if(simpleExoPlayer.getPlayWhenReady()){
+                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady()){
                     simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition()-1500);
                 }
                 videoSurface.showController();
@@ -745,16 +751,15 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 
                 return true;
 
-            case 87: // ch+ next from remote control
+            case KeyEvent.KEYCODE_MEDIA_NEXT: // ch+ next from remote control
             case KeyEvent.KEYCODE_CHANNEL_UP:
             case KeyEvent.KEYCODE_PAGE_UP:
-
                 Logger.d("ENTERED INSIDE", "KEYCODE_PAGE_UP");
                 playNextorPrevMovie(NEXT_MOVIE);
 
                 return true;
 
-            case 88:
+            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
             case KeyEvent.KEYCODE_CHANNEL_DOWN:
             case KeyEvent.KEYCODE_PAGE_DOWN:
                 playNextorPrevMovie(PREV_MOVIE);
@@ -770,17 +775,20 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //                controller.show();
 //                player.start();
                 videoSurface.showController();
+                if(simpleExoPlayer != null && !simpleExoPlayer.getPlayWhenReady())
                 simpleExoPlayer.setPlayWhenReady(true);
                 return true;
             case 7:
 //                controller.show();
 //                player.pause();
                 videoSurface.showController();
+                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
                 simpleExoPlayer.setPlayWhenReady(false);
                 return true;
 
 
             case KeyEvent.KEYCODE_BACK:
+                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
                 simpleExoPlayer.setPlayWhenReady(false);
                 releasePlayer();
 //                try {
@@ -1217,11 +1225,11 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 
     @Override
     protected void onPause() {
-        if (player.isPlaying()) {
+        if (simpleExoPlayer != null &&  simpleExoPlayer.getPlayWhenReady()) {
             try {
-                if (player.getCurrentPosition() > 0) {
+                if (simpleExoPlayer.getCurrentPosition() > 0) {
                     MovieInFile movieinfile = new MovieInFile(thisMovie,
-                            player.getCurrentPosition());
+                            (int)simpleExoPlayer.getCurrentPosition());
                     write(currentMovieId + "", movieinfile);
                 }
 
@@ -1231,11 +1239,11 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         }
         myHandler.removeCallbacks(null);
         releasePlayer();
-        try{
-            player.stop();
-            player.reset();
-            player.release();
-        }catch (Exception ignored){}
+//        try{
+//            player.stop();
+//            player.reset();
+//            player.release();
+//        }catch (Exception ignored){}
 
         EventBus.getDefault().unregister(this);
         finish();
@@ -1856,23 +1864,92 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         }
     }
     private class PlayerEventListener extends Player.DefaultEventListener {
+         boolean isResumed=false;
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
             if (playbackState == Player.STATE_ENDED) {
+                exoNext.setEnabled(true);
+                exoNext.setAlpha(1f);
 //                showControls();
                 isMovieLoaded=false;
                 playNextorPrevMovie(NEXT_MOVIE);
             }else if(playWhenReady && playbackState==Player.STATE_READY){
-                hideLoadingIndicator();
                 exoNext.setEnabled(true);
                 exoNext.setAlpha(1f);
-                videoSurface.showController();
+                if(!isResumed) {
+                    try {
+                        final String last_duration;
+
+                        last_duration = read(thisMovie.getMovie_name());
+                        Logger.d(TAG, "check if can resume " + last_duration);
+
+                        // show dialog only if stored time is greater than 5 minutes
+                        if (Integer.parseInt(last_duration.trim()) > 3 * 60 * 1000
+                                && Integer.parseInt(last_duration.trim()) < player.getDuration() - 3 * 60 * 1000) {
+                            Logger.d("PALO Alert dialog ko", Integer.parseInt(last_duration)
+                                    + "");
+                            // player.pause();
+                            final CustomDialogManager loading_dialog = new CustomDialogManager(
+                                    MoviePlayCustomController.this,
+                                    getString(R.string.msg_resume_movie),
+                                    CustomDialogManager.MESSAGE);
+                            loading_dialog.build();
+                            loading_dialog.show();
+                            loading_dialog.dismissDialogOnBackPressed();
+                            loading_dialog.setPositiveButton("Resume",
+                                    new View.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(View v) {
+                                            // TODO Auto-generated method stub
+                                            // player.seekTo(Integer.parseInt(last_duration));
+                                            //player.start();
+                                            isResumed = true;
+                                            simpleExoPlayer.seekTo(Long.parseLong(last_duration));
+                                            loading_dialog.dismiss();
+
+                                        }
+                                    });
+                            loading_dialog.setNegativeButton("Dismiss",
+                                    new View.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(View v) {
+                                            loading_dialog.dismiss();
+
+                                        }
+                                    });
+                            loading_dialog.setExtraButton("", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    loading_dialog.dismiss();
+                                }
+                            });
+
+                        }
+                    } catch (NumberFormatException e) {
+                        Logger.d("NumberFormatException", e.getMessage() + "");
+
+                    } catch (Exception e) {
+                        Logger.d("Exception at onPrepared of mediaplayer", e.getMessage() + "");
+                        Logger.printStackTrace(e);
+                    }
+                }
+                hideLoadingIndicator();
                 isMovieLoaded=true;
 //                simpleExoPlayer.setPlayWhenReady(true);
             }else if(playbackState == Player.STATE_BUFFERING){
                 showProgressIndicator();
+                exoNext.setEnabled(true);
+                exoNext.setAlpha(1f);
                 isMovieLoaded=false;
+            }else if(playbackState == Player.STATE_IDLE){
+                exoNext.setEnabled(true);
+                exoNext.setAlpha(1f);
+                videoSurface.showController();
+
             }
         }
 
@@ -1886,6 +1963,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
             }
         }
 
+        @SuppressLint("StringFormatInvalid")
         @Override
         public void onPlayerError(ExoPlaybackException e) {
             Log.d("err",e.type+e.getMessage());
