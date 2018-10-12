@@ -34,7 +34,8 @@
         <activity android:name=".MovieListActivity"
             android:configChanges="keyboard|orientation|keyboardHidden"
             android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".MoviePlayCustomController" />
+        <activity android:name=".MoviePlayCustomController"
+            android:theme="@style/AppTheme"/>
         <activity android:name=".ScreenSaverActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".ShowMoreMovies"/>
