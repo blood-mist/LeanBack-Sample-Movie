@@ -71,7 +71,7 @@ public class SearchAsync extends AsyncTask<String,String,String> {
         }
         if (!utc.equals(DownloadUtil.NotOnline)
                 && !utc.equals(DownloadUtil.ServerUnrechable)) {
-            String subCategory_url = strings[0] + "?" + LinkConfig.getHashCode(utc)+"&movieName="+strings[1];
+            String subCategory_url = strings[0] + "?" + LinkConfig.getHashCode(utc)+"&movieName="+strings[1].replace(" ","%20");
             Log.d("subCategory_url", subCategory_url);
             DownloadUtil dUtil = new DownloadUtil(subCategory_url, context,authToken);
 

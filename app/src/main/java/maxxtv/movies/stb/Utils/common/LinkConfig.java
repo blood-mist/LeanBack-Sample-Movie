@@ -22,13 +22,13 @@ public class LinkConfig {
     public static final int ALLOW_COUNTRY = R.string.allow_country;
     public static final int PARENTAL_URL = R.string.parental_url;
     public static final String LOGIN_FILE ="androidtv_mylogin" ;
-    public static String BASE_URL = "https://middleware02.yourman.info/api/v1/";
+    public static String BASE_URL = "https://middleware.yourman.info/api/v1/";
     public static int CHECK_MAC = R.string.check_mac;
-    public static String CHECK_IF_SERVER_RECHABLE = "https://middleware02.yourman.info";
+    public static String CHECK_IF_SERVER_RECHABLE = "https://middleware.yourman.info";
     public static final int LOGIN_BUTTON_CLICK = R.string.login_click ;
     public static final int SEARCH_BUTTON_CLICK=R.string.search_url;
     public static final int CHECK_BEFORE_LOGIN_URL = R.string.check_user ;
-    public static String LINK_SEVER_APKs = "https://middleware02.yourman.info/market_app_info/api/market_app_info.php";
+    public static String LINK_SEVER_APKs = "https://middleware.yourman.info/market_app_info/api/market_app_info.php";
     public static final int GET_UTC = R.string.get_utc;
     public static final int UPDATE_SESSION = R.string.update_session;
     public static final int GET_GROUP = R.string.get_group_info;

@@ -310,7 +310,8 @@ public class EntryPoint extends Activity implements PermissionUtils.PermissionRe
 
             int versionFromJson = apk.getVersionCode();
             Logger.d("CheckingVersion", version + "   " + versionFromJson);
-            if (versionFromJson > version) {
+            if (apk.isUpdate() && apk.getUpdateType().toLowerCase().equals("normal"))  {
+
                 final CustomDialogManager newVerSionAvailable = new CustomDialogManager(EntryPoint.this, CustomDialogManager.WARNING);
                 newVerSionAvailable.build();
                 newVerSionAvailable.setTitle(getString(R.string.update_found));
@@ -340,8 +341,10 @@ public class EntryPoint extends Activity implements PermissionUtils.PermissionRe
                     }
                 });
 
-            } else {
+            }else if(apk.isUpdate() && apk.getUpdateType().toLowerCase().equals("force")){
+                new ApkDownloader(getWeaakReference(), getString(R.string.app_name)).execute(apk.getAppDownloadLink());
 
+            } else {
                 new MergedJson(EntryPoint.this).execute();
             }
         } catch (NameNotFoundException e) {

@@ -324,6 +324,9 @@ public class MovieCategoryActivity extends AppCompatActivity implements SearchCa
 
     private void loadSearchAsyn() {
         searched_movie = search_text.getText().toString();
+        if(searched_movie.contains(" ")){
+            searched_movie.replace(" ", "%20");
+        }
         if (searchAsync != null)
             searchAsync.cancel(true);
         searchAsync = new SearchAsync(MovieCategoryActivity.this, MovieCategoryActivity.this, authToken);

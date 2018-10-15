@@ -121,6 +121,8 @@ public class MarketAppDetailParser {
             marketApp.setVisibility(apkObj.getBoolean("visibility"));
             marketApp.setVersion(apkObj.getString("version_name"));
             marketApp.setVersionCode(apkObj.getInt("version_code"));
+            marketApp.setUpdate(apkObj.getBoolean("update"));
+            marketApp.setUpdateType(apkObj.getString("update_type"));
             packageNames.add(marketApp.getAppPackageName());
             APKs.put(marketApp.getAppPackageName(), marketApp);
         }
