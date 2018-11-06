@@ -219,6 +219,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
             // no-op if we are already showing.
         }
     };
+    private boolean firstLoad = true;
 
 
 
@@ -302,6 +303,8 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                 @Override
                 public void onVisibilityChange(int visibility) {
                        showFragment(visibility);
+                       exoNext.setEnabled(true);
+                       exoNext.setAlpha(1f);
 
                 }
             });
@@ -687,7 +690,7 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         } catch (Exception e) {
             Logger.e("Exception at onBackPressed Method", e.getMessage() + "");
         }
-
+    if(simpleExoPlayer != null && videoSurface.getPlayer() != null) {
         switch (keyCode) {
             /*** USED ONLY FOR TEST ****************************************************************************************************/
             case KeyEvent.KEYCODE_DPAD_UP:
@@ -696,45 +699,43 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //                    return true;
 //                } else
 //                    return super.onKeyDown(keyCode, event);
-                if(videoSurface.isControllerVisible()){
-                    if(!defaultTimeBar.hasFocus()) {
+                if (videoSurface.isControllerVisible()) {
+                    if (!defaultTimeBar.hasFocus()) {
                         defaultTimeBar.requestFocus();
                         return true;
-                    }else{
+                    } else {
                         return super.onKeyDown(keyCode, event);
                     }
-                }
-                else
-                   return super.onKeyDown(keyCode, event);
+                } else
+                    return super.onKeyDown(keyCode, event);
             case KeyEvent.KEYCODE_DPAD_DOWN:
 //                if (!controller.isShowing()) {
 //                    controller.show();
 //                    return true;
 //                } else
 //                    return super.onKeyDown(keyCode, event);
-                if(videoSurface.isControllerVisible()){
-                    if(simpleExoPlayer.getPlayWhenReady()){
+                if (videoSurface.isControllerVisible()) {
+                    if (simpleExoPlayer.getPlayWhenReady()) {
                         exoPause.requestFocus();
-                    }else{
+                    } else {
                         exoPlay.requestFocus();
                     }
                     return true;
-                }
-                else
+                } else
                     return super.onKeyDown(keyCode, event);
 
             case KeyEvent.KEYCODE_DPAD_CENTER:
-                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady()) {
+                if (simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady()) {
                     videoSurface.showController();
                     exoNext.setEnabled(true);
                     exoNext.setAlpha(1f);
                     return true;
-                }else{
-                   return false;
+                } else {
+                    return false;
                 }
 
 
-            /*******************************************************************************************************/
+                /*******************************************************************************************************/
             case KeyEvent.KEYCODE_DPAD_LEFT:
 //                if (!controller.isShowing()) {
 //                    startHandler();
@@ -745,12 +746,13 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //
 //                    return true;
 //                } else return super.onKeyDown(keyCode, event);
-                if(!videoSurface.isControllerVisible()){
-                    if(simpleExoPlayer.getPlayWhenReady()){
-                        simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition()-15000);
+                if (!videoSurface.isControllerVisible()) {
+                    if (simpleExoPlayer.getPlayWhenReady()) {
+                        simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition() - 15000);
+                        return true;
                     }
-                    return true;
-                }else return super.onKeyDown(keyCode, event);
+                    return false;
+                } else return super.onKeyDown(keyCode, event);
 
 
             case KeyEvent.KEYCODE_DPAD_RIGHT:
@@ -764,12 +766,13 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //
 //                    return true;
 //                } else return super.onKeyDown(keyCode, event);
-                if(!videoSurface.isControllerVisible()){
-                    if(simpleExoPlayer.getPlayWhenReady()){
-                        simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition()+15000);
-                    }
-                    return true;
-                }else return super.onKeyDown(keyCode, event);
+                if (!videoSurface.isControllerVisible()) {
+                    if (simpleExoPlayer.getPlayWhenReady()) {
+                        simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition() + 15000);
+                        return true;
+                    }else return false;
+
+                } else return super.onKeyDown(keyCode, event);
 
 
             case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
@@ -782,9 +785,9 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //                    player.start();
 //                }
 //                return true;
-                if(simpleExoPlayer.getPlayWhenReady()){
+                if (simpleExoPlayer.getPlayWhenReady()) {
                     simpleExoPlayer.setPlayWhenReady(false);
-                }else{
+                } else {
                     simpleExoPlayer.setPlayWhenReady(true);
                 }
                 return true;
@@ -792,15 +795,15 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //                startHandler();
 //                controller.show();
 //                player.pause();
-                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
-                simpleExoPlayer.setPlayWhenReady(false);
+                if (simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
+                    simpleExoPlayer.setPlayWhenReady(false);
                 return true;
             case KeyEvent.KEYCODE_MEDIA_PLAY:
 //                startHandler();
 //                controller.show();
 //                player.start();
-                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
-                simpleExoPlayer.setPlayWhenReady(true);
+                if (simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
+                    simpleExoPlayer.setPlayWhenReady(true);
                 return true;
 
             case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
@@ -812,8 +815,8 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //                }catch (Exception ignored){}
 //
 //                controller.show();
-                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady()){
-                    simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition()+15000);
+                if (simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady()) {
+                    simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition() + 15000);
 
                 }
                 videoSurface.showController();
@@ -827,8 +830,8 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //
 //                controller.show();
 //                return true;
-                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady()){
-                    simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition()-15000);
+                if (simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady()) {
+                    simpleExoPlayer.seekTo(simpleExoPlayer.getContentPosition() - 15000);
                 }
                 videoSurface.showController();
                 return true;
@@ -865,21 +868,21 @@ public class MoviePlayCustomController extends AppCompatActivity implements
 //                controller.show();
 //                player.start();
                 videoSurface.showController();
-                if(simpleExoPlayer != null && !simpleExoPlayer.getPlayWhenReady())
-                simpleExoPlayer.setPlayWhenReady(true);
+                if (simpleExoPlayer != null && !simpleExoPlayer.getPlayWhenReady())
+                    simpleExoPlayer.setPlayWhenReady(true);
                 return true;
             case 7:
 //                controller.show();
 //                player.pause();
                 videoSurface.showController();
-                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
-                simpleExoPlayer.setPlayWhenReady(false);
+                if (simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
+                    simpleExoPlayer.setPlayWhenReady(false);
                 return true;
 
 
             case KeyEvent.KEYCODE_BACK:
-                if(simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
-                simpleExoPlayer.setPlayWhenReady(false);
+                if (simpleExoPlayer != null && simpleExoPlayer.getPlayWhenReady())
+                    simpleExoPlayer.setPlayWhenReady(false);
                 releasePlayer();
 //                try {
 //                    player.stop();
@@ -898,6 +901,13 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                 return super.onKeyDown(keyCode, event);
 
         }
+    }else{
+            if(keyCode == KeyEvent.KEYCODE_BACK){
+                MoviePlayCustomController.this.finish();
+                return true;
+            }else
+            return false;
+     }
     }
 
     private void playNextorPrevMovie(int NEXTorPREV) {
@@ -1739,6 +1749,11 @@ public class MoviePlayCustomController extends AppCompatActivity implements
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                if(MoviePlayCustomController.this.isDestroyed()){
+                    MoviePlayCustomController.this.finish();
+                }
+            }
             if (isCancelled()) {
                 MoviePlayCustomController.this.finish();
             } else {
@@ -2061,7 +2076,11 @@ public class MoviePlayCustomController extends AppCompatActivity implements
                 }
                 hideLoadingIndicator();
                 isMovieLoaded=true;
-                videoSurface.showController();
+                if(firstLoad) {
+                    videoSurface.showController();
+                    firstLoad = false;
+
+                }
                 exoNext.setEnabled(true);
                 exoNext.setAlpha(1f);
 //                simpleExoPlayer.setPlayWhenReady(true);

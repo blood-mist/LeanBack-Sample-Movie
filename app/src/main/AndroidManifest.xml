@@ -35,7 +35,8 @@
             android:configChanges="keyboard|orientation|keyboardHidden"
             android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".MoviePlayCustomController"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme"
+            android:turnScreenOn="true"/>
         <activity android:name=".ScreenSaverActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".ShowMoreMovies"/>
