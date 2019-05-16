@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<stb.androidtv.moviesleanback.customFragments.CustomFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="horizontal">
+    <FrameLayout
+        android:id="@+id/header_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|start" />
+
+    <FrameLayout
+        android:id="@+id/rows_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="300dp" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loading_container"/>
+
+    <android.support.v17.leanback.widget.SearchOrbView
+        android:id="@+id/custom_search_orb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="27dp"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:padding="20dp"
+        android:transitionGroup="true"
+        android:layout_marginStart="56dp"
+        android:layout_gravity="top|start" />
+
+</stb.androidtv.moviesleanback.customFragments.CustomFrameLayout>

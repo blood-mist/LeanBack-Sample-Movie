@@ -1,0 +1,57 @@
+package stb.androidtv.moviesleanback.enitities;
+
+import com.google.gson.annotations.SerializedName;
+
+public class GeoAccessInfo {
+
+    public int getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    int responseCode;
+    String error;
+
+
+    @SerializedName("allow")
+    private Allow allow;
+
+    @SerializedName("status")
+    private int status;
+
+    public void setAllow(Allow allow) {
+        this.allow = allow;
+    }
+
+    public Allow getAllow() {
+        return allow;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    @Override
+    public String toString() {
+        return
+                "GeoAccessInfo{" +
+                        "allow = '" + allow + '\'' +
+                        ",status = '" + status + '\'' +
+                        "}";
+    }
+}
