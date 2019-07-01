@@ -330,8 +330,8 @@ public class SplashActivity extends FragmentActivity implements PermissionUtils.
                 Timber.d("Decrypting " + encrypted_password);
                 String decrypted_password = sUtils.getDecryptedToken(encrypted_password);
                 Timber.d("CheckingPassword", decrypted_password);
-//                LiveData<LoginResponseWrapper> loginfildeData = splashViewModel.loginFromFile(userEmail, decrypted_password, macAddress);
-                LiveData<LoginResponseWrapper> loginfildeData = splashViewModel.loginFromFile("demoiptv12@nitv.com","123456", macAddress);
+                LiveData<LoginResponseWrapper> loginfildeData = splashViewModel.loginFromFile(userEmail, decrypted_password, macAddress);
+//                LiveData<LoginResponseWrapper> loginfildeData = splashViewModel.loginFromFile("demoiptv12@nitv.com","123456", macAddress);
                 loginfildeData.observe(this, new Observer<LoginResponseWrapper>() {
                     @Override
                     public void onChanged(@Nullable LoginResponseWrapper loginResponseWrapper) {

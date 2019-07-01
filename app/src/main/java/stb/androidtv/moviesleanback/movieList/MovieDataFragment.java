@@ -9,10 +9,14 @@ import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.OnChildLaidOutListener;
 import android.support.v17.leanback.widget.PresenterSelector;
 import android.support.v17.leanback.widget.SectionRow;
+import android.support.v17.leanback.widget.VerticalGridView;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -52,6 +56,7 @@ public class MovieDataFragment extends BrowseSupportFragment {
         prepareBackgroundManager();
 
         setupUIElements();
+        setBrowseTransitionListener(null);
 
         setUpRows();
 
@@ -84,6 +89,14 @@ public class MovieDataFragment extends BrowseSupportFragment {
         }
         setAdapter(mRowsAdapter);
         getHeadersSupportFragment().setAdapter(mHeaderAdapter);
+        getHeadersSupportFragment().getVerticalGridView().setOnChildLaidOutListener(new OnChildLaidOutListener() {
+            @Override
+            public void onChildLaidOut(ViewGroup parent, View view, int position, long id) {
+                VerticalGridView listView=getHeadersSupportFragment().getVerticalGridView();
+                listView.setChildrenVisibility(View.VISIBLE);
+            }
+        });
+
     }
 
     private void setupUIElements() {

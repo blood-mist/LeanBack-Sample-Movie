@@ -15,19 +15,22 @@ import stb.androidtv.moviesleanback.R;
 
 
 public class LinkConfig {
-    public static final String LOGIN_FILE_NAME = "androidtv_mylogin";
+    public static final String LOGIN_FILE_NAME = "prabhutv_mylogin";
 
-    public static final String ACCOUNT_PACKAGE = "androidtv.myaccount.stb";
+//    public static final String ACCOUNT_PACKAGE = "androidtv.myaccount.stb";
+public static final String ACCOUNT_PACKAGE = "com.nitv.prabhutv.account";
     public static final String MOVIE_ERROR_CODE = "error_code";
     public static final String MOVIE_ERROR_MESSAGE = "error_message";
     public static final String MOVIE_IP = "ip_address";
     public static final String ALLOW_COUNTRY = "other/geoblock";
     // public static final String BASE_URL = "https://middleware.yourman.info/api/v1/";
 //    public static final String BASE_URL = "http://192.168.2.212/api/v1/";
-    public static final String BASE_URL = "http://192.168.1.220/api/v1/";
+//    public static final String BASE_URL = "http://192.168.1.220/api/v1/";
 //    public static final String BASE_URL = "http://59.92.16.3/api/v1/";
 //    public static final String BASE_URL = "http://192.168.1.107/api/v1/";
 //    public static final String BASE_URL = "http://192.168.9.1/api/v1/";
+    public static final String BASE_URL = "https://iptv.prabhutv.com.np/api/v1/";
+
 //    public static final String BASE_URL = "https://demo.newitventure.com/api/v1/";
 //   public static final String BASE_URL ="http://demont.newitventure.com/api/v1/" ;
 
@@ -42,7 +45,8 @@ public class LinkConfig {
 //    public static final String LINK_SEVER_APKs = "http://192.168.9.1/market_app_info/api/market_app_info.php";
 //    public static final String LINK_SEVER_APKs = "https://middleware.yourman.info/market_app_info/api/market_app_info.php";
 //    public static final String LINK_SEVER_APKs = "http://192.168.2.212/market_app_info/api/market_app_info.php";
-    public static final String LINK_SEVER_APKs = "http://192.168.1.220/market_app_info/api/market_app_info.php";
+//    public static final String LINK_SEVER_APKs = "http://192.168.1.220/market_app_info/api/market_app_info.php";
+    public static final String LINK_SEVER_APKs = "https://iptv.prabhutv.com.np/market_app_info/api/market_app_info.php";
 //public static final String LINK_SEVER_APKs = "http://59.92.16.3/market_app_info/api/market_app_info.php";
 
     public static final String GET_UTC = "other/utc";

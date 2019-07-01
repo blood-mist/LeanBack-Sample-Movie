@@ -171,4 +171,5 @@ public class VideoPlayerFragment extends VideoSupportFragment {
 
         }
     };
+
 }

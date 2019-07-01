@@ -25,7 +25,7 @@ import stb.androidtv.moviesleanback.R;
 
 /**
  * This Presenter will display cards which consists of a single icon which will be highlighted by a
- * surrounding circle when the card is focused. AndroidTV uses these cards for entering settings
+ * surrounding circle when the card is focused. App uses these cards for entering settings
  * menu.
  */
 public class IconCardPresenter extends ImageCardViewPresenter {

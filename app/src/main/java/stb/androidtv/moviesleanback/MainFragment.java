@@ -113,6 +113,7 @@ public class MainFragment extends VerticalGridSupportFragment implements OnItemV
         setGridPresenter(gridPresenter);
     }
 
+
     private void getMovieCategories() {
         login = realm.where(Login.class).findFirst();
         if(login!=null) {

@@ -47,10 +47,10 @@ public class CustomHeadersFragment extends HeadersSupportFragment {
 
     }
 
-
     private void setCustomPadding() {
         getVerticalGridView().setGravity(Gravity.CENTER);
         ViewGroup.LayoutParams params = Objects.requireNonNull(getVerticalGridView()).getLayoutParams();
+
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
         params.height =ViewGroup.LayoutParams.WRAP_CONTENT;
         getVerticalGridView().requestLayout();
@@ -63,6 +63,7 @@ public class CustomHeadersFragment extends HeadersSupportFragment {
     private void setHeaderAdapter() {
         adapter = new ArrayObjectAdapter();
 
+
         LinkedHashMap<Integer, CustomRowsFragment> fragments = ((MovieCustomBrowseActivity) getActivity()).getFragments();
 
         for (int i = 0; i < fragments.size(); i++) {
@@ -72,7 +73,6 @@ public class CustomHeadersFragment extends HeadersSupportFragment {
             innerAdapter.add(fragments.get(i));
             adapter.add(i, new ListRow(header, innerAdapter));
         }
-
         setAdapter(adapter);
     }
 

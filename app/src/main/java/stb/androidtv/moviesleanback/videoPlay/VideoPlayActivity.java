@@ -37,15 +37,6 @@ public class VideoPlayActivity extends FragmentActivity {
         movieLink = getIntent().getStringExtra(MOVIE_CLICKED_LINK);
         movieCard = getIntent().getParcelableExtra(MOVIE_ITEM);
         currentMovieList = getIntent().getParcelableArrayListExtra(SIMILAR_MOVIE_LIST);
-        try {
-            InetAddress group = InetAddress.getByName("224.0.0.1");
-            MulticastSocket s = new MulticastSocket();
-            s.joinGroup(group);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.videoFragment, new VideoPlayerFragment(),
                 VideoPlayerFragment.TAG);
@@ -80,4 +71,5 @@ public class VideoPlayActivity extends FragmentActivity {
                 context.getPackageManager().hasSystemFeature(
                         PackageManager.FEATURE_PICTURE_IN_PICTURE);
     }
+
 }

@@ -209,7 +209,9 @@ public class ExoPlayerAdapter extends PlayerAdapter implements Player.EventListe
             return;
         }
         mPlayer.seekTo(newPosition);
+
     }
+
 
     @Override
     public long getBufferedPosition() {
@@ -273,8 +275,8 @@ public class ExoPlayerAdapter extends PlayerAdapter implements Player.EventListe
             case C.TYPE_OTHER:
                 try {
                     UdpDataSource.Factory udpDataSource = dataSourceFactory;
-                  return new ExtractorMediaSource.Factory(udpDataSource).createMediaSource(uri);
-                 }catch (Exception e) {
+                    return new ExtractorMediaSource.Factory(udpDataSource).createMediaSource(uri);
+                } catch (Exception e) {
                     return new ExtractorMediaSource.Factory(dataSourceFactory)
                             .createMediaSource(uri);
                 }
@@ -350,6 +352,8 @@ public class ExoPlayerAdapter extends PlayerAdapter implements Player.EventListe
             if (mSurfaceHolderGlueHost == null || mHasDisplay) {
                 getCallback().onPreparedStateChanged(ExoPlayerAdapter.this);
             }
+        } else if (playbackState == Player.STATE_READY) {
+            getCallback().onPlayStateChanged(ExoPlayerAdapter.this);
         } else if (playbackState == Player.STATE_BUFFERING) {
             mBufferingStart = true;
         } else if (playbackState == Player.STATE_ENDED) {
@@ -393,7 +397,7 @@ public class ExoPlayerAdapter extends PlayerAdapter implements Player.EventListe
      */
     @Override
     public void onSeekProcessed() {
-       play();
+        play();
     }
 
     @Override

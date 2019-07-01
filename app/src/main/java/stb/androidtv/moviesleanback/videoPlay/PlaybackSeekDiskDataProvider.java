@@ -68,6 +68,7 @@ public class PlaybackSeekDiskDataProvider extends PlaybackSeekAsyncDataProvider 
      */
     public static void setDemoSeekProvider(final PlaybackTransportControlGlue glue, String movieUrl) {
         if (glue.isPrepared()) {
+            glue.setSeekEnabled(true);
             glue.setSeekProvider(new PlaybackSeekDiskDataProvider(
                     glue.getDuration(),
                     glue.getDuration() / 100,
@@ -102,10 +103,10 @@ public class PlaybackSeekDiskDataProvider extends PlaybackSeekAsyncDataProvider 
         if (isCancelled(task)) {
             return null;
         }
-            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+            /*MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
             mediaMetadataRetriever.setDataSource(uri,new HashMap<>());
             Bitmap bmFrame = mediaMetadataRetriever.getFrameAtTime(position*1000 , MediaMetadataRetriever.OPTION_CLOSEST);
-            mediaMetadataRetriever.release();
-            return bmFrame;
+            mediaMetadataRetriever.release();*/
+            return Bitmap.createBitmap(160,160, Bitmap.Config.ARGB_8888);
     }
 }

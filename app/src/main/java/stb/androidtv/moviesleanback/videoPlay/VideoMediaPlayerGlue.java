@@ -19,13 +19,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.v17.leanback.media.PlaybackTransportControlGlue;
 import android.support.v17.leanback.media.PlayerAdapter;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.PlaybackControlsRow;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -63,14 +61,9 @@ import stb.androidtv.moviesleanback.utils.GetMac;
 import stb.androidtv.moviesleanback.utils.LinkConfig;
 import stb.androidtv.moviesleanback.utils.TimeStamp;
 
-import static android.support.v17.leanback.widget.PlaybackControlsRow.PlayPauseAction.INDEX_PAUSE;
-import static android.support.v17.leanback.widget.PlaybackControlsRow.PlayPauseAction.INDEX_PLAY;
 import static stb.androidtv.moviesleanback.utils.LinkConfig.KEY_MOVIES;
 import static stb.androidtv.moviesleanback.utils.LinkConfig.MOVIE_CLICKED_LINK;
-import static stb.androidtv.moviesleanback.utils.LinkConfig.MOVIE_DETAILS;
 import static stb.androidtv.moviesleanback.utils.LinkConfig.MOVIE_ITEM;
-import static stb.androidtv.moviesleanback.utils.LinkConfig.MOVIE_NEXT_PREV;
-import static stb.androidtv.moviesleanback.utils.LinkConfig.MOVIE_RESPONSE;
 import static stb.androidtv.moviesleanback.utils.LinkConfig.NO_CONNECTION;
 import static stb.androidtv.moviesleanback.utils.LinkConfig.SIMILAR_MOVIE_LIST;
 
@@ -125,6 +118,7 @@ public class VideoMediaPlayerGlue<T extends PlayerAdapter> extends PlaybackTrans
         super.onActionClicked(action);
     }
 
+
     private boolean shouldDispatchAction(Action action) {
         return action == mPrevious || action == mNext;
     }
@@ -147,6 +141,7 @@ public class VideoMediaPlayerGlue<T extends PlayerAdapter> extends PlaybackTrans
                 Toast.makeText(context, "No Movie found to load", Toast.LENGTH_SHORT).show();
         }
     }
+
 
 
 
